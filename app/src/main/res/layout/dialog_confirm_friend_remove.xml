@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/PrimaryBackground2"
+    android:padding="20dp">
+
+    <Button
+        android:id="@+id/confirm_remove"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/button_accessory"
+        android:text="Unfriend"
+        android:textColor="@color/white"
+        android:textAllCaps="false" />
+
+</LinearLayout>

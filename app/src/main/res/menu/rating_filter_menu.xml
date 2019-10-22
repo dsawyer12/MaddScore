@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/rating_high"
+        android:checked="false"
+        android:title="High to Low" />
+
+    <item
+        android:id="@+id/rating_low"
+        android:checked="false"
+        android:title="Low to High" />
+
+    <item
+        android:id="@+id/rating_none"
+        android:checked="false"
+        android:title="None"/>
+
+</menu>

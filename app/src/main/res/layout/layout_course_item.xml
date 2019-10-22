@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootView"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/accessory_full_border">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/marker_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="10dp"
+                android:paddingEnd="50dp"
+                android:paddingTop="10dp"/>
+
+            <TextView
+                android:id="@+id/marker_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/white"
+                android:paddingStart="15dp"
+                android:paddingEnd="50dp"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/marker_num_holes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:ellipsize="end"
+                android:paddingStart="15dp"
+                android:paddingEnd="50dp" />
+
+            <TextView
+                android:id="@+id/marker_times_played"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="15dp"
+                android:paddingEnd="50dp"
+                android:layout_marginTop="5dp"
+                android:paddingBottom="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="7">
+
+            <TextView
+                android:id="@+id/marker_rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_accessory"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:padding="2dp"
+                android:text="3.5"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/marker_distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:textSize="12sp"
+                android:text="2.4 miles"
+                android:textColor="@color/white"
+                android:padding="2dp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

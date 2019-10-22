@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/par_change"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/PrimaryBackground">
+
+            <TextView
+                android:id="@+id/par_change_title"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingTop="20dp"
+                android:text="Select par for this hole"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/par_change_title"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="10dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/accessory_full_border"
+                android:padding="5dp">
+
+                <Button
+                    android:id="@+id/par_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_accessory"
+                    android:text="PAR 2"/>
+
+                <Button
+                    android:id="@+id/par_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_accessory"
+                    android:text="PAR 3"/>
+
+                <Button
+                    android:id="@+id/par_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_accessory"
+                    android:text="PAR 4"/>
+
+                <Button
+                    android:id="@+id/par_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_accessory"
+                    android:text="PAR 5"/>
+
+                <Button
+                    android:id="@+id/par_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_accessory"
+                    android:text="PAR 6"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
+
+</RelativeLayout>

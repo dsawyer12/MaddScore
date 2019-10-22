@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/PrimaryBackground"
+    android:clickable="true">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/accessory_bottom_border_dark">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/back_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_back_arrow"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/back_button"
+                android:paddingStart="30dp"
+                android:paddingEnd="0dp"
+                android:text="New Course"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/course_name"
+        android:layout_width="320dp"
+        android:layout_height="35dp"
+        android:background="@drawable/text_input_border"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:hint="Course Name"
+        android:inputType="textCapWords"
+        android:maxLines="1"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/new_course_button"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/custom_number"
+       android:layout_margin="20dp"
+        android:background="@drawable/button_accessory"
+        android:textAllCaps="false"
+        android:text="Create Course"/>
+
+    <TextView
+        android:id="@+id/num_holes_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="220dp"
+        android:text="Number of Holes"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/nineText"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/num_holes_text"
+        android:layout_marginTop="5dp"
+        android:layout_toStartOf="@+id/eighteenText"
+        android:background="@drawable/accessory_left_border"
+        android:clickable="true"
+        android:text="9"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:focusable="true" />
+
+    <TextView
+        android:id="@+id/eighteenText"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/num_holes_text"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/accessory_left_border"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="18"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/otherText"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:layout_below="@id/num_holes_text"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/eighteenText"
+        android:background="@color/white"
+        android:text="Other"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:focusable="true" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nineText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        android:text="Select the number of holes the tempCourse will have"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/custom_number"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/text"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/text_input_border"
+        android:inputType="number"
+        android:maxLines="1"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:visibility="invisible" />
+
+</RelativeLayout>

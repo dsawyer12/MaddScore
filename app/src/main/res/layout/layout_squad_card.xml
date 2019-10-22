@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/squad_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/accessory_full_border_green_and_black">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/accessory_full_border"
+            android:padding="1dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/accessory_bottom_border_dark">
+
+                <TextView
+                    android:id="@+id/squad_card_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Squad"
+                   android:layout_centerVertical="true"
+                    android:layout_margin="5dp"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:paddingStart="5dp"
+                    android:textColor="@color/white"/>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_extend"/>
+
+            </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/active_squad_layout"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/squad_name_layout"
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/squad_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="squad name"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp"
+                                android:textColor="@color/colorPrimary" />
+
+                            <TextView
+                                android:id="@+id/squad_member_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textSize="12sp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/player_rank_layout"
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="10dp">
+
+                            <TextView
+                                android:id="@+id/current_rank"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="rank #"
+                                android:textStyle="bold"
+                                android:textSize="20sp"
+                                android:layout_marginTop="5dp"
+                                android:layout_gravity="center"
+                                android:textColor="@color/colorPrimary"/>
+
+                            <TextView
+                                android:id="@+id/current_rank_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Current Rank"
+                                android:textStyle="bold"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_gravity="center"
+                                android:textColor="@color/white"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+</RelativeLayout>

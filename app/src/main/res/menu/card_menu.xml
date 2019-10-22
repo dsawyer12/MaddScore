@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group
+        android:id="@+id/group1">
+        <item
+            android:id="@+id/finish_card"
+            android:title="Finish Scorecard">
+        </item>
+    </group>
+
+    <group
+        android:id="@+id/group2">
+        <item
+            android:id="@+id/add_player"
+            android:title="Add Player">
+        </item>
+    </group>
+
+    <group
+        android:id="@+id/group3">
+        <item
+            android:id="@+id/remove_player"
+            android:title="Remove Player">
+        </item>
+    </group>
+</menu>

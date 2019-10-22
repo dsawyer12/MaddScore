@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/relativeLayoutMain">
+
+    <RelativeLayout
+        android:id="@+id/relLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/finish_card_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="20dp"
+            android:layout_alignParentBottom="true"
+            android:textAllCaps="false"
+            android:background="@drawable/button_accessory"
+            android:text="Finsh Round"/>
+
+        <HorizontalScrollView
+            android:id="@+id/horizontal_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/finish_card_btn">
+
+            <android.support.design.widget.CoordinatorLayout
+                android:id="@+id/coordinator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ScrollView
+                    android:id="@+id/scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <RelativeLayout
+                            android:id="@+id/relLayout2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="6">
+
+                            <TableLayout
+                                android:id="@+id/player_table"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:background="@color/grey">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:textAppearance="?android:attr/textAppearanceLarge"
+                                        android:text="Players"
+                                        android:paddingStart="25px"
+                                        android:paddingEnd="25px"
+                                        android:paddingTop="50px"
+                                        android:paddingBottom="50px"
+                                        android:textSize="14dp"
+                                        android:layout_weight="1"
+                                        android:textColor="@color/colorPrimary"
+                                        android:background="@drawable/accessory_full_border"
+                                        android:gravity="center" />
+
+                            </TableLayout>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/relLayout3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TableLayout
+                                android:id="@+id/chartTable"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/grey"
+                                android:stretchColumns="0,1,2">
+
+                            </TableLayout>
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                </ScrollView>
+
+            </android.support.design.widget.CoordinatorLayout>
+
+        </HorizontalScrollView>
+
+    </RelativeLayout>
+
+</RelativeLayout>

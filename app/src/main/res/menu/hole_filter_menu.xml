@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nine_holes"
+        android:checked="false"
+        android:title="9+" />
+
+    <item
+        android:id="@+id/eighteen_holes"
+        android:checked="false"
+        android:title="18+" />
+
+    <item
+        android:id="@+id/holes_none"
+        android:checked="false"
+        android:title="None"/>
+
+</menu>

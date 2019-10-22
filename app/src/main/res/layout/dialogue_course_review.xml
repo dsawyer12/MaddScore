@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/accessory_full_border_transparent">
+
+    <TextView
+        android:id="@+id/courseName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="McDade Park"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_margin="20dp"
+        android:paddingBottom="20dp"
+        android:background="@drawable/accessory_bottom_border_dark"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="How would you rate this course overall?"
+        android:textColor="@color/white"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+
+        <ImageView
+            android:id="@+id/rate_one_star"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_rate_open"
+            android:layout_weight="1"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/rate_two_star"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_rate_open"
+            android:layout_weight="1"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/rate_three_star"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_rate_open"
+            android:layout_weight="1"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/rate_four_star"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_rate_open"
+            android:layout_weight="1"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/rate_five_star"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_rate_open"
+            android:layout_weight="1"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="20dp"
+        android:text="(Optional)"/>
+
+    <EditText
+        android:id="@+id/written_review"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/accessory_full_border"
+        android:hint="Leave a written Review..."
+        android:padding="10dp"
+        android:maxLength="300"
+        android:inputType="textCapSentences"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:layout_marginEnd="20dp"/>
+
+    <TextView
+        android:id="@+id/character_limit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:textColor="@color/myRed"
+        android:text="Character limit reached."
+        android:layout_marginTop="10dp"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="20dp">
+
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/accessory_button_center_green"
+            android:text="Cancel"
+            android:layout_margin="20dp"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/submit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_accessory"
+            android:text="Submit"
+            android:enabled="false"
+            android:layout_margin="20dp"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

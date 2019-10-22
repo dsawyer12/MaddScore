@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/PrimaryBackground">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/accessory_top_bottom_border">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/back_arrow"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_back_arrow"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:paddingLeft="30dp"
+                    android:layout_toEndOf="@+id/back_arrow"
+                    android:text="Add Members"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appBar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/coordinator">
+
+            <android.support.v7.widget.ContentFrameLayout
+                android:id="@+id/new_member_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:id="@+id/search_player"
+                        android:layout_width="320dp"
+                        android:layout_height="35dp"
+                        android:drawableStart="@drawable/ic_search_dark"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/text_input_border"
+                        android:inputType="text"
+                        android:hint="Search MaddScore"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        android:textCursorDrawable="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="italic" />
+
+                    <RelativeLayout
+                        android:id="@+id/cards_rel_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/search_player"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/accessory_top_bottom_border">
+
+                        <RelativeLayout
+                            android:id="@+id/no_search_found_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone"
+                            android:background="@color/PrimaryBackground">
+
+                            <TextView
+                                android:id="@+id/text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="50dp"
+                                android:text="No matches founds."
+                                android:textAlignment="center" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/text"
+                                android:layout_centerHorizontal="true"
+                                android:text="Note: Squad names are case sensitive."
+                                android:textAlignment="center" />
+
+                        </RelativeLayout>
+
+                        <ListView
+                            android:id="@+id/search_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                        </ListView>
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+
+            </android.support.v7.widget.ContentFrameLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

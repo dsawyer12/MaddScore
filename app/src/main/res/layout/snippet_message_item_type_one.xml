@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <!--<TextView-->
+        <!--android:id="@+id/message_date"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_marginEnd="70dp"-->
+        <!--android:text="April 26 - 3:15pm"-->
+        <!--android:textSize="14sp" />-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/message_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="150dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:background="@drawable/accessory_edit_text_round" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/default_profile_img"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

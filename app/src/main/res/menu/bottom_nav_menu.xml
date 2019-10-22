@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottom_nav_profile"
+        android:checked="false"
+        android:icon="@mipmap/profile"
+        android:title="@string/nav_profile" />
+    <item
+        android:id="@+id/bottom_nav_players"
+        android:checked="false"
+        android:icon="@mipmap/players"
+        android:title="@string/nav_players" />
+    <item
+        android:id="@+id/bottom_nav_courses"
+        android:checked="false"
+        android:icon="@mipmap/courses"
+        android:title="@string/nav_courses" />
+    <item
+        android:id="@+id/bottom_nav_social"
+        android:checked="false"
+        android:icon="@drawable/ic_active_squad_member"
+        android:title="@string/nav_squad" />
+    <item
+        android:id="@+id/bottom_nav_cards"
+        android:checked="false"
+        android:icon="@mipmap/cards"
+        android:title="@string/nav_cards" />
+</menu>

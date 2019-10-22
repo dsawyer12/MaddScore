@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group
+        android:id="@+id/group1">
+
+        <item
+            android:id="@+id/side_menu_events"
+            android:icon="@mipmap/events"
+            android:title="Events"/>
+        <item
+            android:id="@+id/side_menu_Leaderboards"
+            android:icon="@mipmap/leaderboards"
+            android:title="Leaderboards"/>
+        <item
+            android:id="@+id/side_menu_CHIPP"
+            android:icon="@mipmap/chipp"
+            android:title="CHIPP"/>
+
+    </group>
+
+    <group
+        android:id="@+id/group2">
+
+        <item
+            android:id="@+id/side_menu_setings"
+            android:icon="@mipmap/settings"
+            android:title="Setings"/>
+        <item
+            android:id="@+id/side_menu_help"
+            android:icon="@mipmap/help"
+            android:title="Help"/>
+
+    </group>
+
+</menu>

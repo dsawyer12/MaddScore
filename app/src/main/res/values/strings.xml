@@ -1,0 +1,120 @@
+<resources>
+
+    <!--    register string     -->
+    <string name="register_name_hint"><i>Enter your name</i></string>
+    <string name="register_username_hint"><i>Enter a username</i></string>
+    <string name="register_email_hint"><i>Enter a valid email</i></string>
+    <string name="register_password_hint"><i>Enter a password</i></string>
+    <string name="register_phone_number_hint"><i>Enter your phone number</i></string>
+    <string name="create_account_title">Create your account</string>
+    <string name="register_submit_btn">Submit</string>
+    <string name="register_login_btn">Already have an account? Login</string>
+
+    <string name="app_name">MaddScore</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">MaddScore</string>
+    <string name="nav_header_subtitle">Username</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_players">Players</string>
+    <string name="nav_courses">Courses</string>
+    <string name="nav_social">Social</string>
+    <string name="nav_cards">Cards</string>
+
+    <!--    char sets   -->
+    <string name="charset">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY Z</string>
+
+    <!-- Shareed Preferences -->
+
+    <string name="myPrefs"></string>
+    <string-array name="notifications"></string-array>
+
+    <string name="nav_squad">Squad</string>
+    <string name="max_number_of_holes">Max number of holes is 54</string>
+    <string name="select_number_of_holes">Selct the number of holes</string>
+
+
+    <!-- Firebase Strings -->
+
+    <string name="firebase_node_users">users</string>
+    <string name="firebase_node_username">username</string>
+    <string name="firebase_node_name">name</string>
+    <string name="firebase_node_phoneNumber">phoneNumber</string>
+    <string name="firebase_node_courses">cours</string>
+    <string name="firebase_node_scorecard">scorecards</string>
+    <string name="firebase_node_friendsList">friendsList</string>
+    <string name="firebase_node_mySquad">mySquad</string>
+    <string name="firebase_node_squads">squads</string>
+    <string name="firebase_node_userID">userID</string>
+    <string name="firebase_node_userStats">userStats</string>
+    <string name="firebase_node_tempUsers">tempUsers</string>
+    <string name="firebase_node_photoUrl">PhotoUrl</string>
+    <string name="firebase_node_bestScore">bestScore</string>
+    <string name="firebase_node_email">email</string>
+    <string name="firebase_node_rounds">numRounds</string>
+    <string name="firebase_node_registered">registered</string>
+    <string name="firebase_node_squadRank">squadRank</string>
+    <string name="firebase_node_squad_userList">userList</string>
+    <string name="firebase_node_squad_numMembers">numMembers</string>
+    <string name="firebase_node_squad_name">squadName</string>
+    <string name="firebase_node_squad_favorite">favorite</string>
+
+
+    <!-- Miscellaneous -->
+
+    <string name="welcome_user">Welcome MaddScore User!</string>
+    <string name="Squads">Squads</string>
+    <string name="Leaderboards">Leaderboards</string>
+    <string name="get_started_welcome_message">Welcome to the MaddScore community! Here, players can connect and interact with one another to play rounds, track scorecards, rankings and more!</string>
+    <string name="get_started_squads_message">Squads are groups created by users in which other players can join and interact with. Squad members can also compete for VTags. More information on squads will be available in the HELP section!</string>
+    <string name="get_started_leaderboards_message">Track down the best players with the Leaderboards feature!</string>
+    <string name="notifications">notifications</string>
+    <string name="optional">(Optional)</string>
+
+
+    <!-- ERROR. Required fields -->
+
+    <string name="requires_email_message">Email is required</string>
+    <string name="requires_valid_email_message">Please enter a valid email</string>
+    <string name="requires_password">Password is required</string>
+    <string name="requires_password_missing_character_message">Password may be missing characters</string>
+    <string name="requires_name">Enter your name</string>
+    <string name="requires_Player_name">Enter a player name</string>
+    <string name="requires_username">Enter a username</string>
+    <string name="requires_email">Enter your email</string>
+    <string name="requires_valid_email">Please enter a valid email</string>
+    <string name="requires_valid_phone_number">Please enter a valid phone Number</string>
+    <string name="password_minimum">6 characters minimum</string>
+    <string name="already_registered_message">You are already registered</string>
+    <string name="Player">Player</string>
+    <string name="login_btn">Login</string>
+    <string name="create_account_btn">Create Account</string>
+    <string name="login_no_account_text">Dont have an account yet?</string>
+    <string name="login_password">Password</string>
+    <string name="login_email">Email</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="log_out">Log out</string>
+
+</resources>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

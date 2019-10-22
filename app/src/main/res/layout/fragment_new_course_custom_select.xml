@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/create_custom_course_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="New custom course"
+        android:textAllCaps="false"
+        android:background="@drawable/button_accessory"
+        android:layout_margin="20dp"/>
+
+    <TextView
+        android:id="@+id/no_custom_courses_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You have no custom courses."
+        android:layout_below="@id/create_custom_course_btn"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/create_custom_course_btn">
+
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>

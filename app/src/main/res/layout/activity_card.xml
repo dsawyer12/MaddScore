@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.ContentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/card_content_frame"
+    tools:context=".ScoreCards.CardActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/accessory_top_bottom_border">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="30dp"
+                        android:text="Scorecard"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"/>
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_below="@id/appBar">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:background="@drawable/accessory_full_border">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:id="@+id/lin1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/card_course_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="28dp"
+                            android:text="Mcdade"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/card_course_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="18 Holes"
+                            android:layout_marginStart="28dp"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/card_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="28dp"
+                            android:layout_marginTop="10dp"
+                            android:text="Saturday June 21, 2018" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/lin2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/textView4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="10dp"
+                                android:text="Hole" />
+
+                            <TextView
+                                android:id="@+id/card_current_hole"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="12dp"
+                                android:textColor="@color/white"
+                                android:textSize="26sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <Button
+                                android:id="@+id/card_par_options"
+                                android:layout_width="60dp"
+                                android:layout_height="30dp"
+                                android:background="@drawable/button_accessory"
+                                android:text="PAR"
+                                android:layout_gravity="center" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/final_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:visibility="gone"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="33dp"
+                    android:text="Final"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="26sp" />
+
+            </android.support.v7.widget.CardView>
+
+        <RelativeLayout
+            android:id="@+id/relLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/cardview"
+            android:layout_marginBottom="60dp">
+
+                <include layout="@layout/layout_center_viewpager"/>
+
+        </RelativeLayout>
+
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true">
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/accessory_bottom_border"
+                app:tabSelectedTextColor="@color/colorPrimary"
+                app:tabTextColor="@color/black"
+                app:tabMode="scrollable">
+
+            </android.support.design.widget.TabLayout>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.ContentFrameLayout>
