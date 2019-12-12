@@ -1,11 +1,11 @@
 <resources>
 
     <!--    register string     -->
-    <string name="register_name_hint"><i>Enter your name</i></string>
-    <string name="register_username_hint"><i>Enter a username</i></string>
-    <string name="register_email_hint"><i>Enter a valid email</i></string>
-    <string name="register_password_hint"><i>Enter a password</i></string>
-    <string name="register_phone_number_hint"><i>Enter your phone number</i></string>
+    <string name="register_name_hint"><i>Full Name</i></string>
+    <string name="register_username_hint"><i>Username</i></string>
+    <string name="register_email_hint"><i>Valid Email</i></string>
+    <string name="register_password_hint"><i>Password</i></string>
+    <string name="register_phone_number_hint"><i>Phone Number</i></string>
     <string name="create_account_title">Create your account</string>
     <string name="register_submit_btn">Submit</string>
     <string name="register_login_btn">Already have an account? Login</string>
