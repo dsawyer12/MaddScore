@@ -4,12 +4,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-public class UserStats implements Parcelable, Comparable<UserStats>{
+public class UserStats implements Parcelable, Comparable<UserStats> {
 
     private String userID, bestRoundCourse, squad_rank_img;
     private long bestRoundDate;
-    private int scoreAVG, numRounds, bestRoundScore, squadRank, holesThrown,
+    private int numRounds, bestRoundScore, squadRank, holesThrown,
             holeInOnes, eagles, pars, birdies, bogies, doublePlus, eagleAces;
+    private double scoreAVG;
 
     public UserStats(){}
 
@@ -22,7 +23,6 @@ public class UserStats implements Parcelable, Comparable<UserStats>{
         bestRoundCourse = in.readString();
         squad_rank_img = in.readString();
         bestRoundDate = in.readLong();
-        scoreAVG = in.readInt();
         numRounds = in.readInt();
         bestRoundScore = in.readInt();
         squadRank = in.readInt();
@@ -34,6 +34,7 @@ public class UserStats implements Parcelable, Comparable<UserStats>{
         bogies = in.readInt();
         doublePlus = in.readInt();
         eagleAces = in.readInt();
+        scoreAVG = in.readDouble();
     }
 
     @Override
@@ -42,7 +43,6 @@ public class UserStats implements Parcelable, Comparable<UserStats>{
         dest.writeString(bestRoundCourse);
         dest.writeString(squad_rank_img);
         dest.writeLong(bestRoundDate);
-        dest.writeInt(scoreAVG);
         dest.writeInt(numRounds);
         dest.writeInt(bestRoundScore);
         dest.writeInt(squadRank);
@@ -54,6 +54,7 @@ public class UserStats implements Parcelable, Comparable<UserStats>{
         dest.writeInt(bogies);
         dest.writeInt(doublePlus);
         dest.writeInt(eagleAces);
+        dest.writeDouble(scoreAVG);
     }
 
     @Override
@@ -161,11 +162,11 @@ public class UserStats implements Parcelable, Comparable<UserStats>{
         this.squad_rank_img = squad_rank_img;
     }
 
-    public int getScoreAVG() {
+    public double getScoreAVG() {
         return scoreAVG;
     }
 
-    public void setScoreAVG(int scoreAVG) {
+    public void setScoreAVG(double scoreAVG) {
         this.scoreAVG = scoreAVG;
     }
 

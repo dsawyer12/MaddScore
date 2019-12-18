@@ -6,6 +6,7 @@
     <color name="colorBackgroundTransparent2">#d7363636</color>
     <color name="PrimaryBackground">#363636</color>
     <color name="PrimaryBackground2">#303030</color>
+    <color name="transparentBackground">#AB131212</color>
     <color name="colorPrimaryDark">#414F12</color>
     <color name="colorAccent">#dbe6e0</color>
     <color name="centerGreen">#668014</color>
