@@ -2,31 +2,29 @@ package com.example.dsawyer.maddscore.Other;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.dsawyer.maddscore.Profile.ProfileActivity;
 import com.example.dsawyer.maddscore.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.example.dsawyer.maddscore.Utils.LoadingDialog;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "TAG";
 
     private FirebaseAuth mAuth;
     private EditText editTextEmail, editTextPassword;
-    private ProgressBar progressBar;
+    private Button resendEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +34,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         editTextEmail = findViewById(R.id.login_email_field);
         editTextPassword = findViewById(R.id.login_password_field);
-        progressBar = findViewById(R.id.progressBar);
+        resendEmail = findViewById(R.id.email_resend);
 
         findViewById(R.id.login_register_button).setOnClickListener(this);
         findViewById(R.id.login_button).setOnClickListener(this);
+        findViewById(R.id.forgot_password).setOnClickListener(this);
+        resendEmail.setOnClickListener(this);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
@@ -67,49 +67,42 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
 
-        if (password.length() < 6) {
-            editTextPassword.setError(getString(R.string.requires_password_missing_character_message));
-            editTextPassword.requestFocus();
-            return;
-        }
+        LoadingDialog loadingDialog = new LoadingDialog(this);
+        loadingDialog.show();
 
-        progressBar.setVisibility(View.VISIBLE);
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+          loadingDialog.dismiss();
 
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                progressBar.setVisibility(View.GONE);
+            if (task.isSuccessful()) {
+                Log.d(TAG, "onComplete: sign in successful");
+                    try {
+                        if(mAuth.getCurrentUser() != null) {
+                            if (mAuth.getCurrentUser().isEmailVerified()) {
+                                resendEmail.setVisibility(View.GONE);
+                                Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                            else {
+                                resendEmail.setVisibility(View.VISIBLE);
+                                Toast toast= Toast.makeText(LoginActivity.this,
+                                        "Please verify your email before logging in", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 300);
+                                toast.show();
+                                Log.d(TAG, "Login: EmailVerification: user was not email verified. signing them out");
+                            }
+                        }
+                    }
+                    catch(NullPointerException e) {
+                        e.getMessage();
+                    }
 
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "onComplete: sign in successful");
-                    Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-
-//                    try{
-//                        if(mAuth.getCurrentUser().isEmailVerified()) {
-//                            Log.d(TAG, "Login: OnSigningIn: Email is verified. going to profile acitivty");
-//                            Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
-//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                            startActivity(intent);
-//                        }
-//                        else{
-//                            Toast toast= Toast.makeText(LoginActivity.this,
-//                                    "Please verify your email before logging in", Toast.LENGTH_LONG);
-//                            toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 300);
-//                            toast.show();
-//                            mAuth.signOut();
-//                            Log.d(TAG, "Login: EmailVerification: user was not email verified. signing them out");
-//                        }
-//                    }
-//                    catch(NullPointerException e){
-//                        e.getMessage();
-//                    }
-
-                } else {
-                    Log.d(TAG, "onComplete: task NOT successful");
-                    Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
-                }
+            } else {
+                Log.d(TAG, "onComplete: task NOT successful");
+                Toast toast = Toast.makeText(LoginActivity.this,
+                        "No Record found. Please check your email and password and try again", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 300);
+                toast.show();
             }
         });
     }
@@ -117,13 +110,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth.getCurrentUser() != null) {
+        if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isEmailVerified()) {
             Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-        }
-        else {
-            Log.d(TAG, "onStart: mAuth.getCurrertnUser = null");
+            finish();
         }
     }
 
@@ -137,6 +127,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.login_button:
                 userLogin();
+                break;
+
+            case R.id.forgot_password:
+                ForgotPasswordDialog dialog = new ForgotPasswordDialog();
+                dialog.show(getSupportFragmentManager(), "forgot_password");
+                break;
+
+            case R.id.email_resend:
+                if(mAuth.getCurrentUser() != null) {
+                    mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task -> {
+                        if(task.isSuccessful()) {
+                            Toast toast= Toast.makeText(getApplicationContext(),
+                                    "A new verification email has been sent.", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 300);
+                            toast.show();
+                            resendEmail.setVisibility(View.GONE);
+                        }
+                        else if (task.getException() != null)
+                            Toast.makeText(this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show();
+                    });
+                }
                 break;
         }
     }

@@ -19,16 +19,12 @@ public class User implements Parcelable, Comparator<User> {
     public User(String userID,
                 String name,
                 String email,
-                String phoneNumber,
-                String username,
                 Boolean registered,
                 long registerDate) {
-        this.registered = registered;
         this.userID = userID;
         this.name = name;
         this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.username = username;
+        this.registered = registered;
         this.registerDate = registerDate;
     }
 

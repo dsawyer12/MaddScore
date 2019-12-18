@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/PrimaryBackground"
     tools:context=".Other.LoginActivity">
 
@@ -11,6 +11,8 @@
         android:id="@+id/appTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/linear"
         android:paddingTop="60dp"
         android:paddingBottom="60dp"
         android:text="@string/app_name"
@@ -23,10 +25,11 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginTop="60dp"
-        android:layout_below="@id/appTitle">
+        app:layout_constraintTop_toBottomOf="@id/appTitle"
+        app:layout_constraintBottom_toTopOf="@id/login_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="30dp" >
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -40,13 +43,14 @@
                 android:hint="@string/login_email"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
             android:layout_marginTop="80dp" >
 
             <android.support.design.widget.TextInputEditText
@@ -57,58 +61,73 @@
                 android:hint="@string/login_password"
                 android:inputType="textPassword"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
         </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_above="@+id/login_button"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        android:layout_marginBottom="70dp"
-        android:gravity="center_horizontal" />
-
     <Button
         android:id="@+id/login_button"
-        android:layout_width="120dp"
+        android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_centerHorizontal="true"
+        app:layout_constraintTop_toBottomOf="@id/linear"
+        app:layout_constraintBottom_toTopOf="@id/forgot_password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/button_accessory"
         android:text="@string/login_btn"
         android:textAllCaps="false"
-        android:layout_above="@id/no_account_text"
-        android:layout_marginBottom="60dp"
         android:textColor="@color/white"
         android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/no_account_text"
+    <Button
+        android:id="@+id/forgot_password"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/login_no_account_text"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:layout_marginBottom="5dp"
-        android:layout_above="@id/login_register_button"
-        android:layout_centerHorizontal="true"/>
+        app:layout_constraintTop_toBottomOf="@id/login_button"
+        app:layout_constraintBottom_toBottomOf="@id/email_resend"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_below="@id/login_button"
+        android:backgroundTint="@color/PrimaryBackground"
+        android:text="Forgot Password?"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/email_resend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/forgot_password"
+        app:layout_constraintBottom_toBottomOf="@id/login_register_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        android:backgroundTint="@color/PrimaryBackground"
+        android:text="Resend Email for password reset"
+        android:textAllCaps="false"
+        android:textColor="@color/blueButton"
+        android:textSize="14sp" />
 
     <Button
         android:id="@+id/login_register_button"
-        android:layout_width="160dp"
-        android:layout_height="42dp"
-        android:background="@drawable/button_accessory"
-        android:text="@string/create_account_btn"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/email_resend"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@color/PrimaryBackground"
+        android:text="Don't have an account? Sign up!"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:layout_marginBottom="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:textColor="@color/lightGrey"
+        android:textSize="16sp" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

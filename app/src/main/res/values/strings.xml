@@ -4,8 +4,9 @@
     <string name="register_name_hint"><i>Full Name</i></string>
     <string name="register_username_hint"><i>Username</i></string>
     <string name="register_email_hint"><i>Valid Email</i></string>
-    <string name="register_password_hint"><i>Password</i></string>
-    <string name="register_phone_number_hint"><i>Phone Number</i></string>
+    <string name="register_password_hint"><i>Password (6 Characters)</i></string>
+    <string name="register_confirmPassword_hint"><i>Confirm Password</i></string>
+    <string name="register_phone_number_hint"><i>Phone Number  (optional)</i></string>
     <string name="create_account_title">Create your account</string>
     <string name="register_submit_btn">Submit</string>
     <string name="register_login_btn">Already have an account? Login</string>
@@ -25,6 +26,7 @@
 
     <!--    char sets   -->
     <string name="charset">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY Z</string>
+    <string name="OnlyChars">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY Z</string>
 
     <!-- Shareed Preferences -->
 
@@ -86,7 +88,8 @@
     <string name="requires_email">Enter your email</string>
     <string name="requires_valid_email">Please enter a valid email</string>
     <string name="requires_valid_phone_number">Please enter a valid phone Number</string>
-    <string name="password_minimum">6 characters minimum</string>
+    <string name="password_minimum">password too short</string>
+    <string name="password_mismatch">password does not match</string>
     <string name="already_registered_message">You are already registered</string>
     <string name="Player">Player</string>
     <string name="login_btn">Login</string>
