@@ -17,7 +17,6 @@ import android.widget.ImageView;
 
 import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Utils.Permissions;
-import com.example.dsawyer.maddscore.Utils.UniversalImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.Objects;

@@ -6,6 +6,9 @@
         <item name="colorPrimary">@color/lightGrey</item>
         <item name="colorPrimaryDark">@color/PrimaryBackground</item>
         <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:fontFamily">@font/convergence</item>
+        <item name="fontFamily">@font/convergence</item> <!-- target android sdk versions < 26 and > 14 if theme other than AppCompat -->
+
     </style>
 
     <style name="AppTheme.NoActionBar">

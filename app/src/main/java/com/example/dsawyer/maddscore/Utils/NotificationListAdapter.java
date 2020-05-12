@@ -78,7 +78,7 @@ public class NotificationListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.snippet_notification_list, null);
             holder.senderName = convertView.findViewById(R.id.sender_name);
-            holder.userImage = convertView.findViewById(R.id.player_img);
+            holder.userImage = convertView.findViewById(R.id.user_img);
             holder.text = convertView.findViewById(R.id.request_text);
             holder.squadname = convertView.findViewById(R.id.squad_name);
 
@@ -124,7 +124,7 @@ public class NotificationListAdapter extends BaseAdapter {
 
             ref = FirebaseDatabase.getInstance().getReference()
                     .child(ApplicationClass.getContext().getResources().getString(R.string.firebase_node_squads))
-                    .child(userList.get(position).getMySquad());
+                    .child(userList.get(position).getSquad());
             Query query = ref;
             final ViewHolder finalHolder = holder;
             query.addListenerForSingleValueEvent(new ValueEventListener() {

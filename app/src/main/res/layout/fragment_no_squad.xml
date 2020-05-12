@@ -1,99 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true"
-    android:focusable="true">
+    android:layout_height="wrap_content"
+    android:background="@drawable/accessory_dark_fade_vertical">
 
-        <ScrollView
+        <LinearLayout
+            android:id="@+id/featuring"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:padding="15dp">
 
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/no_squad_text"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:text="Join or create a squad to interact with friends and other players!"
+                    android:textAlignment="center" />
 
-                        <LinearLayout
-                            android:id="@+id/featuring"
-                            android:orientation="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="20dp"
-                            android:padding="10dp"
-                            android:background="@drawable/accessory_full_border">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="Being apart of a squad can make for a better experience with the following features :"/>
 
-                                <TextView
-                                    android:id="@+id/no_squad_text"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:padding="20dp"
-                                    android:textSize="16sp"
-                                    android:textColor="@color/white"
-                                    android:text="Join or create a squad to interact with others!"
-                                    android:textAlignment="center" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:padding="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="• Social - Communicate and stay up to date with your squad and plan future games."/>
 
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="14sp"
-                                    android:text="Features:"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:padding="10dp"
+                    android:text="• Events - Create private events with other members of your squad."/>
 
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="14sp"
-                                    android:padding="10dp"
-                                    android:text="• Social - Communicate and stay up to date with your squad and plan future game."/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:padding="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="• Ranks - Compete with other squad members for the number one rank in competitive play."/>
 
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="14sp"
-                                    android:padding="10dp"
-                                    android:text="• Events - Create private events within your squad and its members."/>
+        </LinearLayout>
 
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="14sp"
-                                    android:padding="10dp"
-                                    android:layout_marginBottom="10dp"
-                                    android:text="• Ranks - Compete with other members for the number one rank in competitive play."/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/featuring"
+            android:layout_alignParentBottom="true">
 
-                        </LinearLayout>
+                <Button
+                    android:id="@+id/join_squad_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/button_accessory"
+                    android:text="Join a squad"
+                    android:textAllCaps="false"/>
 
-                        <LinearLayout
-                            android:orientation="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/featuring"
-                            android:layout_alignParentBottom="true">
+                <Button
+                    android:id="@+id/create_squad_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/button_accessory"
+                    android:text="Create a squad"
+                    android:textAllCaps="false"/>
 
-                                <Button
-                                    android:id="@+id/join_squad_button"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="30dp"
-                                    android:layout_marginEnd="30dp"
-                                    android:background="@drawable/button_accessory"
-                                    android:text="Join a squad"
-                                    android:textAllCaps="false"/>
-
-                                <Button
-                                    android:id="@+id/create_squad_button"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="30dp"
-                                    android:layout_marginEnd="30dp"
-                                    android:layout_marginTop="20dp"
-                                    android:background="@drawable/button_accessory"
-                                    android:text="Create a squad"
-                                    android:textAllCaps="false"/>
-
-                        </LinearLayout>
-
-                </RelativeLayout>
-
-        </ScrollView>
+        </LinearLayout>
 
 </RelativeLayout>

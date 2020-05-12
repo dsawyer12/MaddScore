@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 public class UserStats implements Parcelable, Comparable<UserStats> {
 
-    private String userID, bestRoundCourse, squad_rank_img;
+    private String userID, bestRoundCourse;
     private long bestRoundDate;
     private int numRounds, bestRoundScore, squadRank, holesThrown,
             holeInOnes, eagles, pars, birdies, bogies, doublePlus, eagleAces;
@@ -21,7 +21,6 @@ public class UserStats implements Parcelable, Comparable<UserStats> {
     protected UserStats(Parcel in) {
         userID = in.readString();
         bestRoundCourse = in.readString();
-        squad_rank_img = in.readString();
         bestRoundDate = in.readLong();
         numRounds = in.readInt();
         bestRoundScore = in.readInt();
@@ -41,7 +40,6 @@ public class UserStats implements Parcelable, Comparable<UserStats> {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(userID);
         dest.writeString(bestRoundCourse);
-        dest.writeString(squad_rank_img);
         dest.writeLong(bestRoundDate);
         dest.writeInt(numRounds);
         dest.writeInt(bestRoundScore);
@@ -152,14 +150,6 @@ public class UserStats implements Parcelable, Comparable<UserStats> {
 
     public void setBestRoundDate(long bestRoundDate) {
         this.bestRoundDate = bestRoundDate;
-    }
-
-    public String getSquad_rank_img() {
-        return squad_rank_img;
-    }
-
-    public void setSquad_rank_img(String squad_rank_img) {
-        this.squad_rank_img = squad_rank_img;
     }
 
     public double getScoreAVG() {

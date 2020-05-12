@@ -418,7 +418,7 @@ public class CardActivity extends AppCompatActivity implements
             }
 
             List<User> users = mCard.getUsers()
-                    .stream().filter(user -> user.getMySquad() != null)
+                    .stream().filter(user -> user.getSquad() != null)
                     .collect(Collectors.toList());
 
             HashMap<User, Player> userMatch = new HashMap<>();
@@ -432,9 +432,9 @@ public class CardActivity extends AppCompatActivity implements
 
             NavigableMap<String, HashMap<User, Player>> sortedSquads = new TreeMap<>();
             for (Map.Entry<User, Player> objs : userMatch.entrySet()) {
-                HashMap<User, Player> userList = sortedSquads.get(objs.getKey().getMySquad());
+                HashMap<User, Player> userList = sortedSquads.get(objs.getKey().getSquad());
                 if (userList == null)
-                    sortedSquads.put(objs.getKey().getMySquad(), userList = new HashMap<>());
+                    sortedSquads.put(objs.getKey().getSquad(), userList = new HashMap<>());
                 userList.put(objs.getKey(), objs.getValue());
             }
 

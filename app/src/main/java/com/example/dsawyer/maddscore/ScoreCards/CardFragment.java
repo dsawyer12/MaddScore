@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.Scorecard;
 import com.example.dsawyer.maddscore.R;
 
@@ -76,7 +75,7 @@ public class CardFragment extends Fragment implements View.OnClickListener {
         for (int i = 0; i < mCard.getPlayers().size(); i++){
             View v = getLayoutInflater().inflate(R.layout.snippet_card_list_players, null);
 
-            CircleImageView player_photo = v.findViewById(R.id.player_img);
+            CircleImageView player_photo = v.findViewById(R.id.user_img);
 //            if (mCard.getPlayers().get(i).getPlayerPhotoURL() != null){
 //                Glide.with(this).load(mCard.getPlayers().get(i).getPlayerPhotoURL()).into(player_photo);
 //            }

@@ -173,9 +173,9 @@ public class CardChartsFragment extends Fragment implements View.OnClickListener
             View view = getLayoutInflater().inflate(R.layout.snippet_player_list, new TableRow(mContext), false);
 
             if (card.getUsers().get(i).getPhotoUrl() != null)
-                Glide.with(mContext).load(card.getUsers().get(i).getPhotoUrl()).into( (CircleImageView) view.findViewById(R.id.player_img));
+                Glide.with(mContext).load(card.getUsers().get(i).getPhotoUrl()).into( (CircleImageView) view.findViewById(R.id.user_img));
             else
-                Glide.with(mContext).load(R.mipmap.default_profile_img).into( (CircleImageView) view.findViewById(R.id.player_img));
+                Glide.with(mContext).load(R.mipmap.default_profile_img).into( (CircleImageView) view.findViewById(R.id.user_img));
 
 
             ((TextView)view.findViewById(R.id.player_username)).setText(card.getUsers().get(i).getUsername());

@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.example.dsawyer.maddscore.R;
 
-public class CardParSelectorFragment  extends BottomSheetDialogFragment implements View.OnClickListener{
+public class CardParSelectorFragment extends BottomSheetDialogFragment implements View.OnClickListener{
     private static final String TAG = "TAG";
 
     private Button par2, par3, par4, par5, par6;

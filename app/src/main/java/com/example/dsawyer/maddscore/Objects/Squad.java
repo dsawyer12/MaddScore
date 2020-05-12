@@ -11,29 +11,28 @@ public class Squad implements Parcelable {
     private long dateCreated;
     private int privacyLevel;
 
-    private HashMap<String, Boolean> userList = new HashMap<>();
+    private HashMap<String, Boolean> memberList = new HashMap<>();
     private HashMap<String, Boolean> proprietors = new HashMap<>();
     private HashMap<String, Boolean> VIPs = new HashMap<>();
 
     public Squad(){}
 
+    // squadId, currentUser.getUid(), squad_name, squad_description, privacy_level, date, squadMemberList)
+
     public Squad(String squadID,
-                 String publicID,
-                 String squadName,
                  String creatorId,
-                 long dateString,
+                 String squadName,
                  String description,
                  int privacyLevel,
-                 HashMap<String, Boolean> users) {
-        setSquadID(squadID);
-        setPublicID(publicID);
-        setSquadName(squadName);
-        setCreatorId(creatorId);
-        setDateCreated(dateString);
-        setDescription(description);
-        setPrivacyLevel(privacyLevel);
-        setUserList(users);
-        userList.put(creatorId, true);
+                 long date) {
+        this.squadID = squadID;
+        this.creatorId = creatorId;
+        this.squadName = squadName;
+        this.description = description;
+        this.privacyLevel = privacyLevel;
+        this.dateCreated = date;
+
+        this.memberList.put(creatorId, true);
         proprietors.put(creatorId, true);
     }
 
@@ -134,12 +133,12 @@ public class Squad implements Parcelable {
         this.dateCreated = dateCreated;
     }
 
-    public HashMap<String, Boolean> getUserList() {
-        return userList;
+    public HashMap<String, Boolean> getMemberList() {
+        return memberList;
     }
 
-    public void setUserList(HashMap<String, Boolean> userList) {
-        this.userList = userList;
+    public void setMemberList(HashMap<String, Boolean> memberList) {
+        this.memberList = memberList;
     }
 
     public HashMap<String, Boolean> getProprietors() {
@@ -161,14 +160,14 @@ public class Squad implements Parcelable {
     /**********         custom methods      **********/
 
     public void addMember(String userUID){
-        userList.put(userUID, true);
+        memberList.put(userUID, true);
     }
 
     public void removeMember(String userUID){
-        userList.remove(userUID);
+        memberList.remove(userUID);
     }
 
     public Boolean getMember(String userUID){
-        return userList.get(userUID);
+        return memberList.get(userUID);
     }
 }

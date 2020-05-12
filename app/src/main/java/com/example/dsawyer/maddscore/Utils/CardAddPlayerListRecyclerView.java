@@ -44,7 +44,7 @@ public class CardAddPlayerListRecyclerView extends RecyclerView.Adapter<CardAddP
             super(itemView);
             playerUsername = itemView.findViewById(R.id.player_username);
             playerName = itemView.findViewById(R.id.player_name);
-            playerImage = itemView.findViewById(R.id.player_img);
+            playerImage = itemView.findViewById(R.id.user_img);
             rootView = itemView.findViewById(R.id.rootView);
         }
     }

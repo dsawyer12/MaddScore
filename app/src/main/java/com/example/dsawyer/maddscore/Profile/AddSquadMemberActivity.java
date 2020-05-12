@@ -154,7 +154,7 @@ public class AddSquadMemberActivity extends AppCompatActivity implements View.On
     }
 
     private void getSquadInfo(Squad squad) {
-        if (squad.getSquadID().equals(mUser.getMySquad())){
+        if (squad.getSquadID().equals(mUser.getSquad())) {
             SquadFragment mySquad = new SquadFragment();
             setFragment(mySquad);
         }
@@ -167,10 +167,9 @@ public class AddSquadMemberActivity extends AppCompatActivity implements View.On
         }
     }
 
-    public void setFragment(final Fragment fragment){
+    public void setFragment(final Fragment fragment) {
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().add(R.id.card_charts_content_frame, fragment).addToBackStack(null).commit();
-
     }
 
     @Override

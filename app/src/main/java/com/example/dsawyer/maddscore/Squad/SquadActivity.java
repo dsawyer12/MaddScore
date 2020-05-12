@@ -23,8 +23,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,15 +35,18 @@ import com.example.dsawyer.maddscore.Events.EventsActivity;
 import com.example.dsawyer.maddscore.Help.HelpActivity;
 import com.example.dsawyer.maddscore.Leaderboards.LeaderboardsActivity;
 import com.example.dsawyer.maddscore.Objects.Squad;
-import com.example.dsawyer.maddscore.Other.ApplicationClass;
 import com.example.dsawyer.maddscore.Other.LoginActivity;
 import com.example.dsawyer.maddscore.Other.NotificationsActivity;
 import com.example.dsawyer.maddscore.Other.SettingsActivity;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
+import com.example.dsawyer.maddscore.Social.PostFragment;
 import com.example.dsawyer.maddscore.Utils.BottomNavViewHelper;
+import com.example.dsawyer.maddscore.Utils.LoadingDialog;
 import com.example.dsawyer.maddscore.Utils.SectionsPagerAdapter;
+import com.example.dsawyer.maddscore.Utils.SquadMemberListRecyclerViewAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,48 +54,54 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-public class SquadActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+public class SquadActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        SquadMemberListRecyclerViewAdapter.OnSquadMemberClickedListener,
         View.OnClickListener {
     private static final String TAG = "TAG";
 
     private DatabaseReference ref;
-    private String UID;
+    private FirebaseUser currentUser;
     private User mUser;
     private Squad squad;
-    CardView squadCardView;
 
-    TextView squadName, squadMembers;
-    private ViewPager viewPager;
-    private SectionsPagerAdapter adapter;
-    ProgressBar progressBar;
-    LinearLayout lin;
-    Boolean hasSquad = false;
-    Button log_out;
+    private boolean hasSquad = false;
+    private ImageView squad_events_btn, squad_members_btn;
+    private RelativeLayout no_squad_layout;
+//    private LoadingDialog loadingDialog;
+
+    @Override
+    public void onSquadMemberClicked(User user) {
+        Toast.makeText(this, user.getName(), Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_squad);
 
-        ref = FirebaseDatabase.getInstance().getReference();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        squad_events_btn = findViewById(R.id.squad_events_btn);
+        squad_members_btn = findViewById(R.id.squad_members_btn);
+        no_squad_layout = findViewById(R.id.no_squad_layout);
 
-        squadName = findViewById(R.id.squad_name);
-        squadMembers = findViewById(R.id.squad_members);
-        squadCardView = findViewById(R.id.squad_cardView);
-        viewPager = findViewById(R.id.viewpager);
-        log_out = findViewById(R.id.logout);
-        lin = findViewById(R.id.lin);
-        progressBar = findViewById(R.id.progressBar);
-        log_out.setOnClickListener(this);
+        findViewById(R.id.logout).setOnClickListener(this);
+        findViewById(R.id.join_squad_button).setOnClickListener(this);
+        findViewById(R.id.create_squad_button).setOnClickListener(this);
+        squad_events_btn.setOnClickListener(this);
+        squad_members_btn.setOnClickListener(this);
 
         setUpBottomNavView();
         setUpNavDrawer();
-        initializeUserData();
+
+        ref = FirebaseDatabase.getInstance().getReference();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            initUserData();
+        } else
+            Toast.makeText(this, "Something went wrong while trying to retrieve your account data.", Toast.LENGTH_LONG).show();
     }
 
-    private void setUpBottomNavView(){
+    private void setUpBottomNavView() {
         BottomNavigationView mMainNav = findViewById(R.id.main_nav);
 //        BottomNavViewHelper.disableShiftMode(mMainNav);
         Menu menu = mMainNav.getMenu();
@@ -113,98 +124,76 @@ public class SquadActivity extends AppCompatActivity implements NavigationView.O
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void initializeUserData() {
-        progressBar.setVisibility(View.VISIBLE);
-        Query query = ref.child("users").child(UID);
-        query.addValueEventListener(new ValueEventListener() {
+    private void initUserData() {
+//        loadingDialog = new LoadingDialog(this);
+//        loadingDialog.show();
+
+        Query query = ref.child("users").child(currentUser.getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     mUser = dataSnapshot.getValue(User.class);
                     if (mUser != null) {
-                        if(mUser.getMySquad() != null) {
+                        if(mUser.getSquad() != null) {
                             hasSquad = true;
                             invalidateOptionsMenu();
-                            setUpTabLayoutForSquad();
                             initializeSquadData();
+                        } else {
+//                            loadingDialog.dismiss();
+                            no_squad_layout.setVisibility(View.VISIBLE);
+//                            setFragment(new NoSquadFragment(), R.id.frame);
                         }
-                        else
-                            setUpDefaultTabLayout();
                     }
-                    else{
-                        Log.d(TAG, "onDataChange: muser = null");
+                    else {
+//                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Something went wrong while trying to retrieve your user data.", Toast.LENGTH_LONG).show();
                     }
+                } else {
+//                    loadingDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Something went wrong while trying to retrieve your user data.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+//                loadingDialog.dismiss();
             }
         });
-    }
-
-    private void setUpTabLayoutForSquad() {
-//        Log.d(TAG, "setUpTabLayoutForSquad: called");
-//        if (adapter != null) {
-//           finish();
-//           startActivity(getIntent());
-//        }
-
-        adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new SocialFragment());
-        adapter.addFragment(new SquadOverviewFragament());
-        viewPager.setAdapter(adapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(0).setText("Social");
-        tabLayout.getTabAt(1).setText("News");
-
-        View root = tabLayout.getChildAt(0);
-        if (root instanceof LinearLayout) {
-            ((LinearLayout) root).setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-            GradientDrawable drawable = new GradientDrawable();
-            drawable.setColor(ContextCompat.getColor(this, R.color.grey));
-            drawable.setSize(2, 0);
-            ((LinearLayout) root).setDividerPadding(10);
-            ((LinearLayout) root).setDividerDrawable(drawable);
-        }
     }
 
     private void initializeSquadData() {
-        Query query = ref.child("squads").child(mUser.getMySquad());
-        query.addValueEventListener(new ValueEventListener() {
+        Query query = ref.child("squads").child(mUser.getSquad());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    progressBar.setVisibility(View.GONE);
-                    lin.setVisibility(View.VISIBLE);
                     squad = dataSnapshot.getValue(Squad.class);
                     if (squad != null) {
-                        squadName.setText(squad.getSquadName());
-                        squadMembers.setText(squad.getUserList().size() + " members");
+//                        loadingDialog.dismiss();
+                        squad_events_btn.setVisibility(View.VISIBLE);
+                        squad_members_btn.setVisibility(View.VISIBLE);
+                        SocialFragment socialFragment = new SocialFragment();
+                        Bundle args = new Bundle();
+                        args.putParcelable("squad", squad);
+                        args.putParcelable("mUser", mUser);
+                        socialFragment.setArguments(args);
+                        setFragment(socialFragment, R.id.frame, "socialFragment");
+                    } else {
+//                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Something went wrong while trying to retrieve your squad data.", Toast.LENGTH_LONG).show();
                     }
+                } else {
+//                    loadingDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Something went wrong while trying to retrieve your squad data.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+//                loadingDialog.dismiss();
             }
         });
-    }
-
-    private void setUpDefaultTabLayout() {
-        progressBar.setVisibility(View.GONE);
-        lin.setVisibility(View.VISIBLE);
-        Log.d(TAG, "setUpDefaultTabLayout: called");
-        squadCardView.setVisibility(View.GONE);
-        adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new NoSquadFragment());
-        viewPager.setAdapter(adapter);
-        squadName.setVisibility(View.GONE);
-        squadMembers.setVisibility(View.GONE);
     }
 
     @Override
@@ -213,6 +202,20 @@ public class SquadActivity extends AppCompatActivity implements NavigationView.O
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
+
+        if (getSupportFragmentManager().findFragmentByTag("postFragment") != null) {
+            getSupportFragmentManager().popBackStackImmediate();
+            return;
+        }
+
+        if (getSupportFragmentManager().findFragmentByTag("squadMemberList") != null) {
+            getSupportFragmentManager().popBackStackImmediate();
+            return;
+        }
+
+        if (getSupportFragmentManager().findFragmentByTag("socialFragment") != null)
+            super.onBackPressed();
+
         super.onBackPressed();
     }
 
@@ -232,7 +235,7 @@ public class SquadActivity extends AppCompatActivity implements NavigationView.O
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case(R.id.edit_players):
 //                setFragment(new PlayersEditFragment());
                 break;
@@ -240,9 +243,22 @@ public class SquadActivity extends AppCompatActivity implements NavigationView.O
         return super.onOptionsItemSelected(item);
     }
 
+    //            case R.id.copy_MID:
+//                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+//                ClipData clip = ClipData.newPlainText("MaddScore ID", user.getMID());
+//                clipboardManager.setPrimaryClip(clip);
+//                break;
+//
+//            case R.id.share_MID:
+//                Intent intent = new Intent(Intent.ACTION_SEND);
+//                intent.putExtra(Intent.EXTRA_TEXT, user.getMID());
+//                intent.setType("text/plain");
+//                startActivity(Intent.createChooser(intent, "MaddScore ID"));
+//                break;
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
+        switch(item.getItemId()) {
             case(R.id.side_menu_events):
                 Intent intent1 = new Intent(this, EventsActivity.class);
                 finish();
@@ -291,31 +307,73 @@ public class SquadActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
-    public void setFragment(final Fragment fragment){
+    public void setFragment(final Fragment fragment, int id, String tag) {
         final FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.frame, fragment).addToBackStack(null).commit();
+        /********** IF HAVING ISSUES WITH STATE, REPLACE .commit() WITH .commitAllowingStateLoss(). this may produce further issues though *************/
+        fragmentManager.beginTransaction().add(id, fragment, tag).addToBackStack(null).commit();
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case (R.id.logout):
                 FirebaseAuth.getInstance().signOut();
-                if(FirebaseAuth.getInstance().getCurrentUser() == null){
+                if(FirebaseAuth.getInstance().getCurrentUser() == null) {
                     Intent intent = new Intent(this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-                    Toast toast= Toast.makeText(getApplicationContext(),
-                            "Successfully Logged Out!", Toast.LENGTH_LONG);
+                    Toast toast= Toast.makeText(getApplicationContext(),"Successfully Logged Out!", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 300);
                     toast.show();
                     finish();
                     break;
                 }
-                else{
-                    Toast.makeText(SquadActivity.this, "failed to sign out.", Toast.LENGTH_LONG).show();
-                }
+                else Toast.makeText(getApplicationContext(), "failed to sign out.", Toast.LENGTH_LONG).show();
+                break;
+
+            case(R.id.squad_events_btn):
+                break;
+
+            case(R.id.squad_members_btn):
+                SquadListFragment squadListFragment = new SquadListFragment();
+                Bundle args = new Bundle();
+                args.putParcelable("mSquad", squad);
+                args.putParcelable("mUser", mUser);
+                squadListFragment.setArguments(args);
+                setFragment(squadListFragment, R.id.main_frame, "squadMemberList");
+                break;
+
+            case(R.id.join_squad_button):
+                startActivity( new Intent(this, JoinSquadActivity.class));
+                break;
+
+            case(R.id.create_squad_button):
+                startActivity(new Intent(this, CreateSquadActivity.class));
                 break;
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

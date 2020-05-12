@@ -97,6 +97,8 @@ public class ScorecardActivity extends AppCompatActivity implements
 
         recyclerView = findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ScorecardRecyclerView(this);
         recyclerView.setAdapter(adapter);
@@ -296,7 +298,7 @@ public class ScorecardActivity extends AppCompatActivity implements
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.card_nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 

@@ -12,10 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.R;
-import com.example.dsawyer.maddscore.Objects.Player;
 import com.example.dsawyer.maddscore.Objects.Scorecard;
-
-import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -49,7 +46,7 @@ public class CardPlayerListRecyclerView extends RecyclerView.Adapter<CardPlayerL
         public ViewHolder(View itemView) {
             super(itemView);
 
-            player_image = itemView.findViewById(R.id.player_img);
+            player_image = itemView.findViewById(R.id.user_img);
             playerUsername = itemView.findViewById(R.id.card_player_username);
             playerName = itemView.findViewById(R.id.card_player_name);
             playerTotalScore = itemView.findViewById(R.id.card_player_total_score);

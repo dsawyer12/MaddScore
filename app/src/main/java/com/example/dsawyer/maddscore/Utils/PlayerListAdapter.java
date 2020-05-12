@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
-import com.example.dsawyer.maddscore.Objects.Player;
 
 import java.util.ArrayList;
 
@@ -58,7 +57,7 @@ public class PlayerListAdapter extends BaseAdapter{
         if(convertView == null) {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.snippet_player_list_item, null);
-            holder.player_img = convertView.findViewById(R.id.player_img);
+            holder.player_img = convertView.findViewById(R.id.user_img);
             holder.player_username = convertView.findViewById(R.id.player_username);
             holder.player_name = convertView.findViewById(R.id.player_name);
             holder.rootView = convertView.findViewById(R.id.rootView);

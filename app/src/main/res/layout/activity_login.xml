@@ -43,7 +43,7 @@
                 android:hint="@string/login_email"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -61,7 +61,7 @@
                 android:hint="@string/login_password"
                 android:inputType="textPassword"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -98,7 +98,7 @@
         android:text="Forgot Password?"
         android:textAllCaps="false"
         android:textColor="@color/colorPrimary"
-        android:textSize="16sp" />
+        android:textSize="14sp" />
 
     <Button
         android:id="@+id/email_resend"
@@ -128,6 +128,6 @@
         android:text="Don't have an account? Sign up!"
         android:textAllCaps="false"
         android:textColor="@color/lightGrey"
-        android:textSize="16sp" />
+        android:textSize="14sp" />
 
 </android.support.constraint.ConstraintLayout>

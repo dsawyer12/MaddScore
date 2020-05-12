@@ -14,10 +14,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.example.dsawyer.maddscore.Objects.Course;
 import com.example.dsawyer.maddscore.Objects.tempCourse;
 import com.example.dsawyer.maddscore.R;
-import com.example.dsawyer.maddscore.Utils.CourseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,21 +33,20 @@ public class PostCourseSelectorDialog extends DialogFragment implements View.OnC
     private static final int ACTIVITY_NUM = 4;
 
     private DatabaseReference ref;
-    private String UID;
+    private FirebaseUser currentUser;
 
-    Button course_selection_cancel;
     RecyclerView recyclerView;
 
-    public interface OnBundleSelectedListener{
+    OnBundleSelectedListener courseSelected;
+    public interface OnBundleSelectedListener {
         void onCourseSelected(tempCourse tempCourse);
     }
-    OnBundleSelectedListener courseSelected;
 
 
-    public PostCourseSelectorDialog() {
-        super();
-        setArguments(new Bundle());
-    }
+//    public PostCourseSelectorDialog() {
+//        super();
+//        setArguments(new Bundle());
+//    }
 
     @Nullable
     @Override
@@ -56,10 +56,10 @@ public class PostCourseSelectorDialog extends DialogFragment implements View.OnC
 
     @Override
     public void onAttach(Context context) {
-        try{
+        try {
             courseSelected = (OnBundleSelectedListener) getTargetFragment();
         }
-        catch(ClassCastException e){
+        catch(ClassCastException e) {
             e.getMessage();
         }
         super.onAttach(context);
@@ -71,27 +71,24 @@ public class PostCourseSelectorDialog extends DialogFragment implements View.OnC
 
         ref = FirebaseDatabase.getInstance().getReference();
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        course_selection_cancel = view.findViewById(R.id.course_selection_cancel);
         recyclerView = view.findViewById(R.id.recyclerView);
-        course_selection_cancel.setOnClickListener(this);
+        view.findViewById(R.id.course_selection_cancel).setOnClickListener(this);
 
+        ListView courseList = view.findViewById(R.id.course_list);
+        final ArrayList<Course> listOfCourses = new ArrayList<>();
 
-        final ListView courseList = view.findViewById(R.id.course_list);
-        final ArrayList<tempCourse> listOfCours = new ArrayList<>();
-
-        Query query = ref.child("courses").child(UID);
+        Query query = ref.child("courses").child(currentUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    tempCourse tempCourse = ds.getValue(tempCourse.class);
-                    listOfCours.add(tempCourse);
-
+                    Course course = ds.getValue(Course.class);
+                    listOfCourses.add(course);
                 }
-                CourseListAdapter adapter = new CourseListAdapter(getActivity(), listOfCours, ACTIVITY_NUM);
-                courseList.setAdapter(adapter);
+//                CourseListAdapter adapter = new CourseListAdapter(getActivity(), listOfCourses, ACTIVITY_NUM);
+//                courseList.setAdapter(adapter);
             }
 
             @Override
@@ -103,8 +100,8 @@ public class PostCourseSelectorDialog extends DialogFragment implements View.OnC
         courseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                courseSelected.onCourseSelected(listOfCours.get(position));
-                getDialog().dismiss();
+//                courseSelected.onCourseSelected(listOfCourses.get(position));
+//                getDialog().dismiss();
             }
         });
     }

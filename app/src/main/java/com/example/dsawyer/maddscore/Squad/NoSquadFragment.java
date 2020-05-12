@@ -44,9 +44,10 @@ public class NoSquadFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case(R.id.create_squad_button):
-                Intent intent1 = new Intent(getActivity(), CreateSquadActivity.class);
-                startActivity(intent1);
-                intent1.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                if (getActivity() != null) {
+                    startActivity(new Intent(getActivity(), CreateSquadActivity.class));
+                    getActivity().finish();
+                }
 
 //                SquadCreationDialog new_squad = new SquadCreationDialog();
 //                new_squad.setTargetFragment(this, 122);

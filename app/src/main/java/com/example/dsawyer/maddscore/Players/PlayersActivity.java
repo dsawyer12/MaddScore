@@ -138,7 +138,7 @@ public class PlayersActivity extends AppCompatActivity implements NavigationView
                 if (dataSnapshot.exists()) {
                     mUser = dataSnapshot.getValue(User.class);
                     if (mUser != null) {
-                        if(mUser.getMySquad() != null)
+                        if(mUser.getSquad() != null)
                             setUpTabLayoutForSquad();
                         else
                             setUpDefaultTabLayout();

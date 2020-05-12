@@ -129,7 +129,7 @@ public class NotificationRecyclerView extends RecyclerView.Adapter<NotificationR
             super(itemView);
             rootView = itemView.findViewById(R.id.rootView);
             senderName = itemView.findViewById(R.id.sender_name);
-            userImage = itemView.findViewById(R.id.player_img);
+            userImage = itemView.findViewById(R.id.user_img);
             text = itemView.findViewById(R.id.request_text);
             snippet = itemView.findViewById(R.id.snippet);
             accept = itemView.findViewById(R.id.accept_request_btn);

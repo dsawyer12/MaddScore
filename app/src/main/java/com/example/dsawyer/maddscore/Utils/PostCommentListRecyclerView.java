@@ -10,32 +10,41 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.dsawyer.maddscore.Objects.PostCommentUserMap;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Objects.PostComment;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class PostCommentListRecyclerView extends RecyclerView.Adapter<PostCommentListRecyclerView.ViewHolder>{
+public class PostCommentListRecyclerView extends RecyclerView.Adapter<PostCommentListRecyclerView.ViewHolder> {
     private static final String TAG = "TAG";
 
-    private ArrayList<PostComment> comments;
-    private User mUser;
     private Context context;
-    private OnItemClickListener listener;
+    private ArrayList<PostCommentUserMap> comments;
+    private SimpleDateFormat sdf;
+    private String dateString;
 
-    public interface OnItemClickListener {
-        void onItemClicked(View v, int position);
+    public PostCommentListRecyclerView(Context context) {
+        this.comments = new ArrayList<>();
+        this.context = context;
+        sdf = new SimpleDateFormat("MMM dd 'at' h:mm a", Locale.US);
+//        this.listener = listener;
     }
 
-    public PostCommentListRecyclerView(Context context, ArrayList<PostComment> comments, User mUser) {
-        Log.d(TAG, "POST LIST SIZE: " + comments.size());
-        this.comments = comments;
-        this.context = context;
-        this.mUser = mUser;
-        this.listener = listener;
+    public void addItems(ArrayList<PostCommentUserMap> comments) {
+        Log.d(TAG, "addItems: called");
+        int initSize = this.comments.size();
+        this.comments.addAll(comments);
+        notifyItemRangeChanged(initSize, comments.size());
+    }
+
+    public ArrayList<PostCommentUserMap> getComments() {
+        return comments;
     }
 
     @NonNull
@@ -49,25 +58,25 @@ public class PostCommentListRecyclerView extends RecyclerView.Adapter<PostCommen
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
-        holder.username.setText(comments.get(position).getUsername() + " - " + comments.get(position).getName());
-        holder.commentBody.setText(comments.get(position).getCommentBody());
-        holder.commentDate.setText(String.valueOf(comments.get(position).getCommentDate()));
+        holder.username.setText(comments.get(position).getUsername());
+        if (comments.get(position).getPhotoUrl() != null)
+            Glide.with(context).load(comments.get(position).getPhotoUrl()).into(holder.user_image);
+        else
+            Glide.with(context).load(R.mipmap.default_profile_img).into(holder.user_image);
 
-        if (comments.get(position).getPhotoID() != null){
-            Glide.with(context).load(comments.get(position).getPhotoID()).into(holder.profileImage);
-        }
-        else{
-            Glide.with(context).load(R.mipmap.default_profile_img).into(holder.profileImage);
-        }
+        holder.commentBody.setText(comments.get(position).getPostComment().getCommentBody());
+        dateString = sdf.format(comments.get(position).getPostComment().getCommentDate());
+        holder.commentDate.setText(dateString);
+
     }
     @Override
     public int getItemCount() {
         return comments.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        CircleImageView profileImage;
+        CircleImageView user_image;
         TextView username, commentDate, commentBody;
 
         public ViewHolder(View itemView) {
@@ -76,7 +85,7 @@ public class PostCommentListRecyclerView extends RecyclerView.Adapter<PostCommen
             username = itemView.findViewById(R.id.usernameAndName);
             commentDate = itemView.findViewById(R.id.comment_date);
             commentBody = itemView.findViewById(R.id.comment_body);
-            profileImage = itemView.findViewById(R.id.user_image);
+            user_image = itemView.findViewById(R.id.user_image);
         }
     }
 }

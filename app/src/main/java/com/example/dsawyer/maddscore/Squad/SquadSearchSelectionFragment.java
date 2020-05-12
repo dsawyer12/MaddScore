@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.Notification;
 import com.example.dsawyer.maddscore.Objects.Squad;
 import com.example.dsawyer.maddscore.Objects.User;
@@ -33,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
@@ -115,10 +113,10 @@ public class SquadSearchSelectionFragment extends Fragment implements View.OnCli
         squad_users = new ArrayList<>();
         stats = new ArrayList<>();
 
-        members.addAll(squad.getUserList().keySet());
+        members.addAll(squad.getMemberList().keySet());
 
         squad_name.setText(squad.getSquadName());
-        num_members.setText(squad.getUserList().size() + " Member(s)");
+        num_members.setText(squad.getMemberList().size() + " Member(s)");
 //        creator_username.setText(squad.getCreatorUsername());
 //        creator_name.setText(squad.getCreatorName());
 //        if (squad.getCreatorPhotoId() != null){

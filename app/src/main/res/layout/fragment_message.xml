@@ -91,7 +91,7 @@
                 android:background="@drawable/accessory_circle_background"
                 android:padding="10dp"
                 android:layout_gravity="bottom"
-                android:src="@drawable/ic_send" />
+                android:src="@drawable/ic_edit" />
 
         </LinearLayout>
 

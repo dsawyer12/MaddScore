@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.media.ExifInterface;
 import android.util.Log;
 
@@ -19,7 +18,7 @@ import java.io.InputStream;
 public class PhotoManager {
     private static final String TAG = "TAG";
 
-    public static Bitmap getBitmap(String imgURL){
+    public static Bitmap getBitmap(String imgURL) {
         File  imgFile = new File(imgURL);
         FileInputStream stream = null;
         Bitmap bitmap = null;
@@ -28,21 +27,22 @@ public class PhotoManager {
             bitmap = BitmapFactory.decodeStream(stream);
 
         }
-        catch (FileNotFoundException e){
+        catch (FileNotFoundException e) {
             Log.e(TAG, "getBitmap: FileNotFoundException " + e.getMessage());
         }
         finally {
             try {
-                stream.close();
+                if (stream != null)
+                    stream.close();
             }
-            catch (IOException e){
+            catch (IOException e) {
                 Log.e(TAG, "getBitmap: FileNotFoundException " + e.getMessage());
             }
         }
         return bitmap;
     }
 
-    public static byte[] getBytesFromBitmap(Bitmap bitmap, int quality){
+    public static byte[] getBytesFromBitmap(Bitmap bitmap, int quality) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream);
         return stream.toByteArray();

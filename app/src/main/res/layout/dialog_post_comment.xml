@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/PrimaryBackground">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/transparent_bottom_border" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/comment_cancel"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_back_arrow"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:background="@color/PrimaryBackground2">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/comment_Recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/send_bar"
+            android:background="@color/PrimaryBackground2">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <LinearLayout
+            android:id="@+id/send_bar"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/accessory_top_bottom_border"
+            android:layout_alignParentBottom="true"
+            android:padding="12dp">
+
+            <EditText
+                android:id="@+id/comment_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/accessory_edit_text_round"
+                android:hint="Enter message..."
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLength="300"
+                android:layout_marginEnd="20dp"
+                android:paddingStart="20dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="10dp"
+                android:layout_weight="1"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/comment_send"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/accessory_circle_background"
+                android:padding="10dp"
+                android:layout_gravity="bottom"
+                android:src="@drawable/ic_edit" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

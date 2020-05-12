@@ -9,7 +9,7 @@
     android:background="@drawable/accessory_bottom_border_dark">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/player_img"
+            android:id="@+id/user_img"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@mipmap/default_profile_img"

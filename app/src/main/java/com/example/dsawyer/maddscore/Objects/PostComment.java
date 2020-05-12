@@ -1,40 +1,22 @@
 package com.example.dsawyer.maddscore.Objects;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class PostComment {
 
-    private String userID, username, name, photoID, commentBody, postID, commentID;
+    private String userID, postID, commentID, commentBody;
     private long commentDate;
-    private CircleImageView userIMG;
 
-    public PostComment() {
-    }
+    public PostComment() {  }
 
     public PostComment(String userID,
-                       String username,
-                       String name,
-                       String photoID,
-                       String commentBody,
-                       long commentDate,
                        String postID,
-                       CircleImageView userIMG) {
+                       String commentID,
+                       String commentBody,
+                       long commentDate) {
         this.userID = userID;
-        this.username = username;
-        this.name = name;
-        this.photoID = photoID;
+        this.postID = postID;
+        this.commentID = commentID;
         this.commentBody = commentBody;
         this.commentDate = commentDate;
-        this.postID = postID;
-        this.userIMG = userIMG;
-    }
-
-    public String getPhotoID() {
-        return photoID;
-    }
-
-    public void setPhotoID(String photoID) {
-        this.photoID = photoID;
     }
 
     public String getCommentID() {
@@ -53,28 +35,14 @@ public class PostComment {
         this.postID = postID;
     }
 
+
+
     public String getUserID() {
         return userID;
     }
 
     public void setUserID(String userID) {
         this.userID = userID;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getCommentBody() {
@@ -91,13 +59,5 @@ public class PostComment {
 
     public void setCommentDate(long commentDate) {
         this.commentDate = commentDate;
-    }
-
-    public CircleImageView getUserIMG() {
-        return userIMG;
-    }
-
-    public void setUserIMG(CircleImageView userIMG) {
-        this.userIMG = userIMG;
     }
 }

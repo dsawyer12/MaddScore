@@ -175,7 +175,7 @@
                             android:padding="10dp"/>
 
                         <RelativeLayout
-                            android:id="@+id/relative"
+                            android:id="@+id/profile_image_parent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/nearby_text"
@@ -202,7 +202,7 @@
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
                             android:layout_marginTop="10dp"
-                            android:layout_below="@id/relative">
+                            android:layout_below="@id/profile_image_parent">
 
                             <RelativeLayout
                                 android:id="@+id/my_courses"
@@ -249,33 +249,6 @@
 
     </FrameLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/drawer_menu" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="vertical"
-            android:padding="18dp">
-
-            <Button
-                android:id="@+id/logout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/accessory_button_red"
-                android:gravity="center"
-                android:text="@string/log_out"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                android:textColor="@color/white"/>
-        </LinearLayout>
-
-    </android.support.design.widget.NavigationView>
+    <include layout="@layout/side_navigation_view" />
 
 </android.support.v4.widget.DrawerLayout>

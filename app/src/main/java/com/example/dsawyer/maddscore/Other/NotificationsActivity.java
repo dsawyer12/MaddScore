@@ -155,7 +155,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                                                                 Log.d(TAG, "users mySquad node was updated");
 
                                                                 //add squad rank to user profile
-                                                                ref.child("userStats").child(UID).child("squadRank").setValue(squad.getUserList().size() + 1)
+                                                                ref.child("userStats").child(UID).child("squadRank").setValue(squad.getMemberList().size() + 1)
                                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
@@ -216,7 +216,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                                                                 Log.d(TAG, "users mySquad node was updated");
 
                                                                 //add squad rank to user profile
-                                                                ref.child("userStats").child(n.getSender()).child("squadRank").setValue(squad.getUserList().size() + 1)
+                                                                ref.child("userStats").child(n.getSender()).child("squadRank").setValue(squad.getMemberList().size() + 1)
                                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {

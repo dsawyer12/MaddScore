@@ -27,6 +27,8 @@ public class LoadingDialog extends Dialog {
         if (getWindow() != null)
             getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        setCanceledOnTouchOutside(false);
+
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_loading, findViewById(R.id.parent));
         setContentView(view);

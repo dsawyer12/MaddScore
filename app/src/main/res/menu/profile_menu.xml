@@ -4,5 +4,13 @@
         <item
             android:id="@+id/edit_profile"
             android:title="Edit Profile"/>
+        <item
+            android:id="@+id/hide_squad_card"
+            android:checkable="true"
+            android:title="Hide Squad Card"/>
+        <item
+            android:id="@+id/hide_stats_card"
+            android:checkable="true"
+            android:title="Hide Stats Card"/>
 
 </menu>

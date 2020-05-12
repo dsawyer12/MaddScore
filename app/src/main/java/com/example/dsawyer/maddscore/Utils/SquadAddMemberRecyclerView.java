@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -17,7 +16,6 @@ import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -81,7 +79,7 @@ public class SquadAddMemberRecyclerView extends RecyclerView.Adapter<SquadAddMem
             super(itemView);
             playerUsername = itemView.findViewById(R.id.player_username);
             playerName = itemView.findViewById(R.id.player_name);
-            profileImage = itemView.findViewById(R.id.player_img);
+            profileImage = itemView.findViewById(R.id.user_img);
             invite = itemView.findViewById(R.id.invite_btn);
         }
     }

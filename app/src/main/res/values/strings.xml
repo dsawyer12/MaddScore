@@ -8,7 +8,7 @@
     <string name="register_confirmPassword_hint"><i>Confirm Password</i></string>
     <string name="register_phone_number_hint"><i>Phone Number  (optional)</i></string>
     <string name="create_account_title">Create your account</string>
-    <string name="register_submit_btn">Submit</string>
+    <string name="register_continue">Continue</string>
     <string name="register_login_btn">Already have an account? Login</string>
 
     <string name="app_name">MaddScore</string>

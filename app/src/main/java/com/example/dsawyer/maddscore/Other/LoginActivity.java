@@ -19,7 +19,8 @@ import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Utils.LoadingDialog;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class
+LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "TAG";
 
     private FirebaseAuth mAuth;
@@ -75,22 +76,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             if (task.isSuccessful()) {
                 Log.d(TAG, "onComplete: sign in successful");
+                startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
+                finish();
                     try {
                         if(mAuth.getCurrentUser() != null) {
-                            if (mAuth.getCurrentUser().isEmailVerified()) {
-                                resendEmail.setVisibility(View.GONE);
-                                Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                            else {
-                                resendEmail.setVisibility(View.VISIBLE);
-                                Toast toast= Toast.makeText(LoginActivity.this,
-                                        "Please verify your email before logging in", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 300);
-                                toast.show();
-                                Log.d(TAG, "Login: EmailVerification: user was not email verified. signing them out");
-                            }
+//                            if (mAuth.getCurrentUser().isEmailVerified()) {
+//                                resendEmail.setVisibility(View.GONE);
+//                                Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+//                                startActivity(intent);
+//                                finish();
+//                            }
+//                            else {
+//                                resendEmail.setVisibility(View.VISIBLE);
+//                                Toast toast= Toast.makeText(LoginActivity.this,
+//                                        "Please verify your email before logging in", Toast.LENGTH_SHORT);
+//                                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 300);
+//                                toast.show();
+//                                Log.d(TAG, "Login: EmailVerification: user was not email verified. signing them out");
+//                            }
                         }
                     }
                     catch(NullPointerException e) {
@@ -110,11 +113,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isEmailVerified()) {
-            Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
-            startActivity(intent);
+        if (mAuth.getCurrentUser() != null) {
+            Log.d(TAG, "onStart: currentUser is not null");
+            // && mAuth.getCurrentUser.isEmailedVerified
+            startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
             finish();
-        }
+        } else Log.d(TAG, "onStart: currentUser is null");
+
     }
 
     @Override

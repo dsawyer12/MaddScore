@@ -16,16 +16,14 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.dsawyer.maddscore.Objects.Squad;
-import com.example.dsawyer.maddscore.Objects.User;
-import com.example.dsawyer.maddscore.Players.PlayerSearchFragment;
 import com.example.dsawyer.maddscore.R;
+import com.example.dsawyer.maddscore.Utils.UIDGenerator;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,10 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.UUID;
 
 public class CreateSquadActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "TAG";
@@ -53,7 +48,9 @@ public class CreateSquadActivity extends AppCompatActivity implements View.OnCli
     TextView warning;
 
     private DatabaseReference ref;
-    private String UID;
+    private FirebaseUser currentUser;
+
+    private Squad squad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +59,7 @@ public class CreateSquadActivity extends AppCompatActivity implements View.OnCli
 
         ref = FirebaseDatabase.getInstance().getReference();
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         warning = findViewById(R.id.squad_name_warning);
         cancel = findViewById(R.id.cancel_new_squad_creation);
@@ -88,19 +85,14 @@ public class CreateSquadActivity extends AppCompatActivity implements View.OnCli
                     warning.setVisibility(View.GONE);
             }
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){
-
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count){
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){  }
+            public void onTextChanged(CharSequence s, int start, int before, int count){  }
         });
 
     }
 
     public void verifyCredentials() {
-        HashMap<String, Boolean> userList;
+        Log.d(TAG, "verifyCredentials: called");
         String squad_name = name.getText().toString().trim();
         String squad_description = description.getText().toString().trim();
         int radioId = privacy_group.getCheckedRadioButtonId();
@@ -126,65 +118,51 @@ public class CreateSquadActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
 
-        userList = new HashMap<>();
-        userList.put(UID, true);
-
         final String squadId = ref.child("squads").push().getKey();
-        final String publicSquadID = UUID.randomUUID().toString();
+        squad = new Squad(squadId, currentUser.getUid(), squad_name, squad_description, privacy_level, date);
+        generateUID();
+//        final String publicSquadID = UUID.randomUUID().toString();
+    }
 
-        Squad squad = new Squad(squadId, publicSquadID, squad_name, UID, date, squad_description, privacy_level, userList);
-
-        ref.child("squads").child(squadId).setValue(squad).addOnCompleteListener(new OnCompleteListener<Void>() {
+    public synchronized void generateUID() {
+        Log.d(TAG, "generateUID: called");
+        String UID = UIDGenerator.getUID(8);
+        ref.child("publicSquadIDs").child(UID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    ref.child("users").child(UID).child("mySquad").setValue(squadId).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful())
-                                setUserRank();
-                        }
-                    });
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                    generateUID();
+                else {
+                    Log.d(TAG, "public squad ID : " + UID);
+                    squad.setPublicID(UID);
+                    completeSquadSetup();
                 }
             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {  }
         });
     }
 
-    private void setUserRank() {
-        Query query = ref.child("userStats").child(UID);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    dataSnapshot.getRef().child("squadRank").setValue(1).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "squad creation success");
-                                Intent intent = new Intent(CreateSquadActivity.this, SquadActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                            }
-                            else
-                                Log.d(TAG, "onComplete: setUserRank NOT successful");
-                        }
-                    });
-                }
-                else{
-                    Log.d(TAG, "onDataChange: UID does not match");
-                }
-            }
+    public void completeSquadSetup() {
+        Log.d(TAG, "completeSquadSetup: called");
+        ref.child("squads").child(squad.getSquadID()).setValue(squad).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                HashMap<String, Object> newSquadMap = new HashMap<>();
+                newSquadMap.put("/users/" + currentUser.getUid() + "/squad/", squad.getSquadID());
+                newSquadMap.put("/users/" + currentUser.getUid() + "/squad_rank/", 1);
+                newSquadMap.put("/publicSquadIDs/" + squad.getPublicID(), squad.getSquadID());
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                ref.updateChildren(newSquadMap).addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        Intent intent = new Intent(this, SquadActivity.class);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
             }
         });
-    }
-
-    public void setFragment(final Fragment fragment, String tag) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.new_squad_frame, fragment, tag).addToBackStack(null).commit();
     }
 
     @Override

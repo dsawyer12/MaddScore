@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Are you sure you want to delete this post?"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="30dp"
+            android:paddingBottom="30dp"
+            android:background="@drawable/transparent_bottom_border"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/button_accessory_grey"
+                android:layout_margin="30dp"
+                android:textSize="14sp"
+                android:textAllCaps="false"
+                android:text="Cancel"
+                android:layout_weight="1">
+
+            </Button>
+
+            <Button
+                android:id="@+id/delete"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_margin="30dp"
+                android:enabled="false"
+                android:textSize="14sp"
+                android:textAllCaps="false"
+                android:background="@drawable/accessory_button_red"
+                android:text="Delete"
+                android:layout_weight="1">
+
+            </Button>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

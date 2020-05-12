@@ -134,7 +134,7 @@ public class CoursesActivity extends AppCompatActivity implements
         my_courses = findViewById(R.id.my_courses);
         search_filters = findViewById(R.id.search_filters);
         scrollView = findViewById(R.id.scroll);
-        nearby_container = findViewById(R.id.relative);
+        nearby_container = findViewById(R.id.profile_image_parent);
 
         course_header = findViewById(R.id.course_header);
         course_list_items = findViewById(R.id.course_list_item);
@@ -269,22 +269,24 @@ public class CoursesActivity extends AppCompatActivity implements
     public void createMarkers() {
         Log.d(TAG, "createMarkers: called");
         if (!courses.isEmpty()) {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(getCurrentLatLng(), 10));
-            manager = new ClusterManager<>(this, map);
-            manager.getMarkerCollection().setOnInfoWindowAdapter(new CustomMarkerInfoAdapter());
+            if (getCurrentLatLng() != null) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(getCurrentLatLng(), 10));
+                manager = new ClusterManager<>(this, map);
+                manager.getMarkerCollection().setOnInfoWindowAdapter(new CustomMarkerInfoAdapter());
 
-            manager.setOnClusterClickListener(this);
-            manager.setOnClusterItemClickListener(this);
-            manager.setOnClusterItemInfoWindowClickListener(this);
+                manager.setOnClusterClickListener(this);
+                manager.setOnClusterItemClickListener(this);
+                manager.setOnClusterItemInfoWindowClickListener(this);
 
-            map.setOnMarkerClickListener(manager);
-            map.setOnCameraIdleListener(manager);
-            map.setOnInfoWindowClickListener(manager);
-            map.setInfoWindowAdapter(manager.getMarkerManager());
+                map.setOnMarkerClickListener(manager);
+                map.setOnCameraIdleListener(manager);
+                map.setOnInfoWindowClickListener(manager);
+                map.setInfoWindowAdapter(manager.getMarkerManager());
 
-            manager.addItems(courses);
+                manager.addItems(courses);
 
-            getCourseDistances();
+                getCourseDistances();
+            }
         }
     }
 

@@ -10,55 +10,62 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/accessory_full_border_green_and_black">
+        android:layout_marginTop="10dp">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/accessory_full_border"
+            android:background="@color/mediumGrey"
             android:padding="1dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/accessory_bottom_border_dark">
+                android:padding="5dp"
+                android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Stats"
                     android:paddingStart="5dp"
-                    android:layout_centerVertical="true"
+                    android:paddingEnd="5dp"
+                    android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:textColor="@color/white"/>
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/ic_extend"/>
+<!--                <ImageView-->
+<!--                    android:id="@+id/stats_card_options"-->
+<!--                    android:layout_width="25dp"-->
+<!--                    android:layout_height="25dp"-->
+<!--                    android:layout_margin="5dp"-->
+<!--                    android:src="@drawable/ic_menu_item"/>-->
 
-            </RelativeLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/no_stats_msg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:text="Get started by creating a new scorecard!"
+                android:text="No data available"
                 android:gravity="center"
-                android:padding="20dp"/>
+                android:textSize="14sp"
+                android:layout_marginBottom="20dp"/>
 
                 <LinearLayout
                     android:id="@+id/active_stats_layout"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp">
+                    android:visibility="gone"
+                    android:paddingBottom="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -67,13 +74,12 @@
                         android:layout_weight="1">
 
                         <TextView
-                            android:id="@+id/stats_AVG"
+                            android:id="@+id/score_AVG"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="-"
                             android:textStyle="bold"
                             android:gravity="center"
-                            android:layout_marginTop="5dp"
                             android:textSize="18sp"
                             android:textColor="@color/colorPrimary"/>
 
@@ -81,7 +87,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="AVG"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginTop="10dp"
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textColor="@color/white"/>
@@ -102,15 +108,14 @@
                             android:gravity="center"
                             android:textColor="@color/colorPrimary"
                             android:textSize="18dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="5dp" />
+                            android:layout_marginStart="10dp" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Best Score"
                             android:layout_marginStart="10dp"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginTop="10dp"
                             android:textStyle="bold"
                             android:textColor="@color/white" />
 
@@ -129,8 +134,7 @@
                             android:layout_height="wrap_content"
                             android:text="-"
                             android:layout_marginStart="10dp"
-                            android:layout_marginTop="5dp"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:textStyle="bold"
                             android:layout_gravity="center"
                             android:textColor="@color/colorPrimary"/>
@@ -142,7 +146,7 @@
                             android:text="-"
                             android:layout_gravity="center"
                             android:layout_marginStart="10dp"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginTop="10dp"
                             android:textSize="12sp" />
 
                     </LinearLayout>

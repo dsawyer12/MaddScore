@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Objects.Squad;
-import com.example.dsawyer.maddscore.Utils.UniversalImageLoader;
+import com.example.dsawyer.maddscore.UselessButGoodInfo.UniversalImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -123,7 +123,7 @@ public class ProfileOverviewFragment extends Fragment {
         username.setText(user.getUsername());
 //        rounds.setText(Integer.toString(user.getNumRounds()) + " Rounds Played");
 //        best_score.setText(Integer.toString(user.getBestScore()));
-        if(user.getMySquad() != null) {
+        if(user.getSquad() != null) {
             relLayout.setVisibility(View.VISIBLE);
             initializeSquadData();
         }
@@ -134,12 +134,12 @@ public class ProfileOverviewFragment extends Fragment {
 
     private void initializeSquadData() {
         Log.d(TAG, "initializeSquadData: called");
-        Query query = ref.child("squads").child(user.getMySquad());
+        Query query = ref.child("squads").child(user.getSquad());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.getKey().equals(user.getMySquad())){
+                if (dataSnapshot.getKey().equals(user.getSquad())){
                     squad = dataSnapshot.getValue(Squad.class);
                     setUpUserSquad(squad);
                 }

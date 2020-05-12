@@ -91,7 +91,7 @@ public class SquadFragment extends Fragment implements View.OnClickListener{
                     creator = ds.getValue(User.class);
                 }
 
-                if (!creator.getMySquad().equals("none")){
+                if (!creator.getSquad().equals("none")){
                     Log.d(TAG, "user has a squad");
                     relLayout.setVisibility(View.GONE);
                     relLayout2.setVisibility(View.VISIBLE);
@@ -112,7 +112,7 @@ public class SquadFragment extends Fragment implements View.OnClickListener{
     }
 
     private void getSquadList() {
-        Query query = ref.child("squads").child(creator.getMySquad());
+        Query query = ref.child("squads").child(creator.getSquad());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -139,7 +139,7 @@ public class SquadFragment extends Fragment implements View.OnClickListener{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 stats.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()){
-                     for (String key : mySquad.getUserList().keySet()){
+                     for (String key : mySquad.getMemberList().keySet()){
                          if (ds.getKey().equals(key)){
                              stats.add(ds.getValue(UserStats.class));
                          }
@@ -164,7 +164,7 @@ public class SquadFragment extends Fragment implements View.OnClickListener{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userList.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()){
-                    for (String key : mySquad.getUserList().keySet()) {
+                    for (String key : mySquad.getMemberList().keySet()) {
                         if (ds.getValue(User.class).getUserID().equals(key)){
                             userList.add(mUser);
                         }

@@ -6,12 +6,13 @@ import android.os.Parcelable;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class User implements Parcelable, Comparator<User> {
+public class User implements Parcelable, Comparator<User>, Comparable<User> {
 
-    private String creator, userID, name, email, phoneNumber, username, PhotoUrl, mySquad;
+    private String creator, userID, name, email, phoneNumber, username, PhotoUrl, squad, squad_rank_img;
     private HashMap<String, Boolean> friends = new HashMap<>();
-    private boolean registered;
+    private boolean registered, completeAccount;
     private long registerDate;
+    private int squad_rank;
 
     public User() {}
 
@@ -29,7 +30,6 @@ public class User implements Parcelable, Comparator<User> {
     }
 
     /*****   tempUser constructor    *****/
-
     public User(Boolean registered,
                 String creator,
                 String userID,
@@ -52,9 +52,12 @@ public class User implements Parcelable, Comparator<User> {
         phoneNumber = in.readString();
         username = in.readString();
         PhotoUrl = in.readString();
-        mySquad = in.readString();
+        squad = in.readString();
+        squad_rank_img = in.readString();
         registered = in.readByte() != 0;
+        completeAccount = in.readByte() != 0;
         registerDate = in.readLong();
+        squad_rank = in.readInt();
     }
 
     @Override
@@ -66,9 +69,12 @@ public class User implements Parcelable, Comparator<User> {
         dest.writeString(phoneNumber);
         dest.writeString(username);
         dest.writeString(PhotoUrl);
-        dest.writeString(mySquad);
+        dest.writeString(squad);
+        dest.writeString(squad_rank_img);
         dest.writeByte((byte) (registered ? 1 : 0));
+        dest.writeByte((byte) (completeAccount ? 1 : 0));
         dest.writeLong(registerDate);
+        dest.writeInt(squad_rank);
     }
 
     @Override
@@ -87,6 +93,14 @@ public class User implements Parcelable, Comparator<User> {
             return new User[size];
         }
     };
+
+    public boolean isCompleteAccount() {
+        return completeAccount;
+    }
+
+    public void setCompleteAccount(boolean completeAccount) {
+        this.completeAccount = completeAccount;
+    }
 
     public long getRegisterDate() {
         return registerDate;
@@ -160,12 +174,12 @@ public class User implements Parcelable, Comparator<User> {
             PhotoUrl = photoUrl;
         }
 
-        public String getMySquad() {
-            return mySquad;
+        public String getSquad() {
+            return squad;
         }
 
-        public void setMySquad(String mySquad) {
-            this.mySquad = mySquad;
+        public void setSquad(String squad) {
+            this.squad = squad;
         }
 
         public String getPhoneNumber() {
@@ -176,9 +190,30 @@ public class User implements Parcelable, Comparator<User> {
             this.phoneNumber = phoneNumber;
         }
 
+    public int getSquad_rank() {
+        return squad_rank;
+    }
+
+    public void setSquad_rank(int squad_rank) {
+        this.squad_rank = squad_rank;
+    }
+
+    public String getSquad_rank_img() {
+        return squad_rank_img;
+    }
+
+    public void setSquad_rank_img(String squad_rank_img) {
+        this.squad_rank_img = squad_rank_img;
+    }
+
     @Override
     public int compare(User user1, User user2) {
-        return user1.getMySquad().compareTo(user2.getMySquad());
+        return user1.getSquad().compareTo(user2.getSquad());
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return (this.squad_rank - user.getSquad_rank());
     }
 }
 

@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.dsawyer.maddscore.Objects.tempCourse;
+import com.example.dsawyer.maddscore.Objects.Course;
 import com.example.dsawyer.maddscore.R;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class CourseListAdapter extends BaseAdapter {
     private static final String TAG = "TAG";
 
     private LayoutInflater inflater;
-    private ArrayList<tempCourse> listOfCours;
+    private ArrayList<Course> listOfCourses;
     private int ACTIVITY_NUM;
 
     private class ViewHolder {
@@ -28,17 +28,17 @@ public class CourseListAdapter extends BaseAdapter {
         LinearLayout favorites_layout;
     }
 
-    public CourseListAdapter(Context context, ArrayList<tempCourse> listOfCours, int ACTIVITY_NUM) {
+    public CourseListAdapter(Context context, ArrayList<Course> listOfCourses, int ACTIVITY_NUM) {
         inflater = LayoutInflater.from(context);
-        this.listOfCours = listOfCours;
+        this.listOfCourses = listOfCourses;
         this.ACTIVITY_NUM = ACTIVITY_NUM;
-        for (int i = 0; i < listOfCours.size(); i++){
-            Log.d(TAG, listOfCours.get(i).getName());
+        for (int i = 0; i < listOfCourses.size(); i++) {
+            Log.d(TAG, listOfCourses.get(i).getName());
         }
     }
 
     public int getCount() {
-        return listOfCours.size();
+        return listOfCourses.size();
     }
 
     @Override
@@ -46,19 +46,19 @@ public class CourseListAdapter extends BaseAdapter {
         return null;
     }
 
-    public void setFavorite(int position, Boolean value){
-        listOfCours.get(position).setFavorite(value);
-        notifyDataSetChanged();
-    }
+//    public void setFavorite(int position, Boolean value) {
+//        listOfCourses.get(position).setFavorite(value);
+//        notifyDataSetChanged();
+//    }
 
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
     }
 
-    public Boolean getfavorites(int position){
-        return listOfCours.get(position).getFavorite();
-    }
+//    public Boolean getFavorites(int position){
+//        return listOfCourses.get(position).getFavorite();
+//    }
 
     public long getItemId(int position) {
         return position;
@@ -83,23 +83,22 @@ public class CourseListAdapter extends BaseAdapter {
 //            });
             convertView.setTag(holder);
         }
-        else {
+        else
             holder = (ViewHolder) convertView.getTag();
-        }
 
-        holder.textView1.setText(listOfCours.get(position).getName());
-        holder.textView2.setText(String.valueOf(listOfCours.get(position).getNumHoles()) + " Holes");
-        holder.textView3.setText("Played " + String.valueOf(listOfCours.get(position).getNumRounds()) + " times");
+//        holder.textView1.setText(listOfCourses.get(position).getName());
+//        holder.textView2.setText(String.valueOf(listOfCourses.get(position).getNumHoles()) + " Holes");
+//        holder.textView3.setText("Played " + String.valueOf(listOfCourses.get(position).getNumRounds()) + " times");
 //        if (ACTIVITY_NUM == 4){
 //            holder.favorites_layout.setVisibility(View.GONE);
 //        }
 //        else{
-            if (getfavorites(position)){
-                holder.favorites_layout.setVisibility(View.VISIBLE);
-            }
-            else{
-                holder.favorites_layout.setVisibility(View.GONE);
-            }
+//            if (getFavorites(position)){
+//                holder.favorites_layout.setVisibility(View.VISIBLE);
+//            }
+//            else{
+//                holder.favorites_layout.setVisibility(View.GONE);
+//            }
 //        }
         return convertView;
     }

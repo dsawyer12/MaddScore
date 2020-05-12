@@ -102,7 +102,7 @@ public class CardAddPlayerSquadListFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     mUser = dataSnapshot.getValue(User.class);
-                    if (mUser != null && mUser.getMySquad() != null) {
+                    if (mUser != null && mUser.getSquad() != null) {
                         getSquad();
                     }
                 }
@@ -116,7 +116,7 @@ public class CardAddPlayerSquadListFragment extends Fragment {
     }
 
     private void getSquad() {
-        Query query = ref.child("squads").child(mUser.getMySquad());
+        Query query = ref.child("squads").child(mUser.getSquad());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -145,10 +145,10 @@ public class CardAddPlayerSquadListFragment extends Fragment {
 
         //remove those current player IDs from the squad list (filter out the ones that are already on the card)
         for (int i = 0; i < currentPlayerIds.size(); i++)
-            mySquad.getUserList().remove(currentPlayerIds.get(i));
+            mySquad.getMemberList().remove(currentPlayerIds.get(i));
 
         //get the remaining users to display in the listView
-        if (!mySquad.getUserList().isEmpty()) {
+        if (!mySquad.getMemberList().isEmpty()) {
             no_players.setVisibility(View.GONE);
             Query query = ref.child("users");
             query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -158,7 +158,7 @@ public class CardAddPlayerSquadListFragment extends Fragment {
                     User user;
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                        user = ds.getValue(User.class);
-                        for (String key : mySquad.getUserList().keySet()) {
+                        for (String key : mySquad.getMemberList().keySet()) {
                             if (user != null && user.getUserID().equals(key)) {
                                 Log.d(TAG, "squad user found : " + user.getName());
                                 squadMemberList.add(user);

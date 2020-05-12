@@ -19,6 +19,7 @@
     <color name="brown">#362819</color>
     <color name="gold">#FFEA00</color>
     <color name="grey">#575757</color>
+    <color name="mediumGrey">#424242</color>
     <color name="lightGrey">#EDEDED</color>
     <color name="greyGreen">#DBE6E0</color>
     <color name="foreground_material_dark">#ffffff</color>

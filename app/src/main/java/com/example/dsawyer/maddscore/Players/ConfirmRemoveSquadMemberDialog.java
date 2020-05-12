@@ -10,11 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,8 +19,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ConfirmRemoveSquadMemberDialog extends BottomSheetDialogFragment implements View.OnClickListener {
     private static final String TAG = "TAG";
@@ -71,7 +66,7 @@ public class ConfirmRemoveSquadMemberDialog extends BottomSheetDialogFragment im
                 if (mUser != null) {
                     // along with the code below, send the user a notification that they have been removed from the squad
                     ref.child("squads")
-                            .child(mUser.getMySquad())
+                            .child(mUser.getSquad())
                             .child("userList")
                             .child(mUser.getUserID())
                             .removeValue()

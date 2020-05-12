@@ -7,56 +7,49 @@ import java.util.HashMap;
 
 public class Post implements Parcelable {
 
-    private String postKey, userId, courseLocation, postBody, playTime;
-    private int likes;
+    private String postID, creatorID, courseLocation, postBody, playTime;
     private long dateCreated;
     private HashMap<String, Boolean> comments;
-    private HashMap<String, Boolean> userlist;
+    private HashMap<String, Boolean> userLikesList;
 
-    public Post(){
+    public Post() {  }
 
-    }
-
-    public Post(String postKey,
-                String userId,
+    public Post(String postID,
+                String creatorID,
                 String courseLocation,
                 long dateCreated,
                 String postBody,
                 String playTime,
-                int likes,
                HashMap<String, Boolean> comments,
                 HashMap<String,
-                        Boolean> userlist) {
+                        Boolean> userLikesList) {
 
-        this.postKey = postKey;
-        this.userId = userId;
+        this.postID = postID;
+        this.creatorID = creatorID;
         this.courseLocation = courseLocation;
         this.dateCreated = dateCreated;
         this.postBody = postBody;
         this.playTime = playTime;
-        this.likes = likes;
         this.comments = comments;
-        this.userlist = userlist;
+        this.userLikesList = userLikesList;
     }
 
     protected Post(Parcel in) {
-        postKey = in.readString();
-        userId = in.readString();
+        postID = in.readString();
+        creatorID = in.readString();
         courseLocation = in.readString();
         postBody = in.readString();
         playTime = in.readString();
-        likes = in.readInt();
         dateCreated = in.readLong();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(postKey);
-        dest.writeString(userId);
+        dest.writeString(postID);
+        dest.writeString(creatorID);
         dest.writeString(courseLocation);
         dest.writeString(postBody);
         dest.writeString(playTime);
-        dest.writeInt(likes);
         dest.writeLong(dateCreated);
     }
 
@@ -77,20 +70,20 @@ public class Post implements Parcelable {
         }
     };
 
-    public String getPostKey() {
-        return postKey;
+    public String getPostID() {
+        return postID;
     }
 
-    public void setPostKey(String postKey) {
-        this.postKey = postKey;
+    public void setPostID(String postID) {
+        this.postID = postID;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getCreatorID() {
+        return creatorID;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setCreatorID(String creatorID) {
+        this.creatorID = creatorID;
     }
 
     public String getCourseLocation() {
@@ -126,15 +119,9 @@ public class Post implements Parcelable {
     }
 
     public int getLikes() {
-        if (getUserlist() != null){
-            return userlist.size();
-        }else{
-            return 0;
-        }
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
+        if (getUserLikesList() != null)
+            return userLikesList.size();
+        else return 0;
     }
 
     public HashMap<String, Boolean> getComments() {
@@ -145,12 +132,12 @@ public class Post implements Parcelable {
         this.comments = comments;
     }
 
-    public HashMap<String, Boolean> getUserlist() {
-        return userlist;
+    public HashMap<String, Boolean> getUserLikesList() {
+        return userLikesList;
     }
 
-    public void setUserlist(HashMap<String, Boolean> userlist) {
-        this.userlist = userlist;
+    public void setUserLikesList(HashMap<String, Boolean> userLikesList) {
+        this.userLikesList = userLikesList;
     }
 
 

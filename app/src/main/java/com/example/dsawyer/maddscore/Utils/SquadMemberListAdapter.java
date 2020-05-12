@@ -72,7 +72,7 @@ public class SquadMemberListAdapter extends BaseAdapter {
             holder.username = convertView.findViewById(R.id.player_username);
             holder.name = convertView.findViewById(R.id.player_name);
             holder.rank = convertView.findViewById(R.id.player_rank);
-            holder.playerImage = convertView.findViewById(R.id.player_img);
+            holder.playerImage = convertView.findViewById(R.id.user_img);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

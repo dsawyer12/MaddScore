@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -20,7 +19,6 @@ import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.ActiveRequest;
 import com.example.dsawyer.maddscore.Objects.Notification;
 import com.example.dsawyer.maddscore.Objects.User;
-import com.example.dsawyer.maddscore.Other.NotificationsActivity;
 import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Objects.Squad;
 import com.example.dsawyer.maddscore.Social.MessageFragment;
@@ -31,13 +29,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -222,9 +216,9 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
     public void getCurrentUserSquad() {
         Log.d(TAG, "getCurrentUserSquad: ");
-        if (currentUser.getMySquad() != null) {
+        if (currentUser.getSquad() != null) {
             Log.d(TAG, "getCurrentUserSquad: current user has a squad");
-            ref.child("squads").child(currentUser.getMySquad()).addListenerForSingleValueEvent(new ValueEventListener() {
+            ref.child("squads").child(currentUser.getSquad()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -263,9 +257,9 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     public void getmUserSquad() {
         Log.d(TAG, "getmUserSquad: ");
         invite_to_squad.setVisibility(View.VISIBLE);
-        if (mUser.getMySquad() != null) {
+        if (mUser.getSquad() != null) {
             Log.d(TAG, "getmUserSquad: mUser has a squad");
-            if (mUser.getMySquad().equals(currentUser.getMySquad())) {
+            if (mUser.getSquad().equals(currentUser.getSquad())) {
                 Log.d(TAG, "getmUserSquad: mUser and current user are in the same squad");
                 active_member = true;
                 invite_to_squad_txt.setText("Squad");
@@ -385,7 +379,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                         UID,
                         currentUser.getName(),
                         currentUser.getPhotoUrl(),
-                        currentUser.getMySquad(),
+                        currentUser.getSquad(),
                         squad.getSquadName(),
                         mUser.getUserID(),
                         NOTIFICATION_TYPE,

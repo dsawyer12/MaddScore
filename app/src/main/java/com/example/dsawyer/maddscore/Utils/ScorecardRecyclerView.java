@@ -33,21 +33,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ScorecardRecyclerView extends RecyclerView.Adapter<ScorecardRecyclerView.ViewHolder> {
     private static final String TAG = "TAG";
 
-//    private DatabaseReference ref;
-//    private String UID;
-//    LayoutInflater inflater;
-
     Context context;
     ArrayList<Scorecard> scorecards;
 
     public ScorecardRecyclerView(Context context) {
-//        inflater = LayoutInflater.from(context);
         this.context = context;
         this.scorecards = new ArrayList<>();
-
-//        ref = FirebaseDatabase.getInstance().getReference();
-//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-//            UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

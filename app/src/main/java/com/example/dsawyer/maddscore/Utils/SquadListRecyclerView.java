@@ -27,7 +27,7 @@ public class SquadListRecyclerView extends RecyclerView.Adapter<SquadListRecycle
     private ArrayList<UserStats> userStats;
     private OnItemClicked listener;
 
-    public interface OnItemClicked{
+    public interface OnItemClicked {
         void onClick(User user);
     }
 
@@ -50,7 +50,7 @@ public class SquadListRecyclerView extends RecyclerView.Adapter<SquadListRecycle
             playerUsername = itemView.findViewById(R.id.player_username);
             playerName = itemView.findViewById(R.id.player_name);
             playerRank = itemView.findViewById(R.id.player_rank);
-            playerImage = itemView.findViewById(R.id.player_img);
+            playerImage = itemView.findViewById(R.id.user_img);
             rootView = itemView.findViewById(R.id.rootView);
         }
     }

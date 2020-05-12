@@ -14,7 +14,6 @@ import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -45,7 +44,7 @@ public class PlayerListRecyclerView extends RecyclerView.Adapter<PlayerListRecyc
             playerUsername = itemView.findViewById(R.id.player_username);
             playerName = itemView.findViewById(R.id.player_name);
             rootView = itemView.findViewById(R.id.rootView);
-            profileImage = itemView.findViewById(R.id.player_img);
+            profileImage = itemView.findViewById(R.id.user_img);
         }
     }
 

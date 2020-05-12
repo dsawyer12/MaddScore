@@ -93,7 +93,7 @@ public class SquadPlayerListFragment extends Fragment{
                 if (dataSnapshot.exists())
                     user = dataSnapshot.getValue(User.class);
 
-                if (user != null && user.getMySquad() != null)
+                if (user != null && user.getSquad() != null)
                     getSquadList();
             }
 
@@ -105,7 +105,7 @@ public class SquadPlayerListFragment extends Fragment{
     }
 
     private void getSquadList() {
-        Query query = ref.child("squads").child(user.getMySquad());
+        Query query = ref.child("squads").child(user.getSquad());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -130,7 +130,7 @@ public class SquadPlayerListFragment extends Fragment{
                 userList.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     if (ds.getValue(User.class) != null) {
-                        for (String key : mySquad.getUserList().keySet()) {
+                        for (String key : mySquad.getMemberList().keySet()) {
                             if (ds.getValue(User.class).getUserID().equals(key))
                                 userList.add(ds.getValue(User.class));
                         }
@@ -155,7 +155,7 @@ public class SquadPlayerListFragment extends Fragment{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userStatsList.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    for (String key : mySquad.getUserList().keySet()) {
+                    for (String key : mySquad.getMemberList().keySet()) {
                         if (ds.getKey().equals(key))
                             userStatsList.add(ds.getValue(UserStats.class));
                     }

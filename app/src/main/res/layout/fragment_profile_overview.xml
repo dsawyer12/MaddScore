@@ -51,7 +51,7 @@
             </android.support.design.widget.AppBarLayout>
 
             <RelativeLayout
-                android:id="@+id/linLayout"
+                android:id="@+id/relative"
                 android:layout_width="match_parent"
                 android:background="@color/PrimaryBackground"
                 android:layout_height="200dp"
@@ -97,7 +97,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/linLayout"
+                android:layout_below="@id/relative"
                 android:background="@drawable/accessory_bottom_border_dark"
                 android:orientation="vertical">
 

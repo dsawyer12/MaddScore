@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.dsawyer.maddscore.Other.ForgotPasswordDialog;
 import com.example.dsawyer.maddscore.R;
+import com.example.dsawyer.maddscore.Utils.LoadingDialog;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class EditPasswordDialog extends DialogFragment implements View.OnClickListener {
     private static final String TAG = "TAG";
@@ -26,12 +34,7 @@ public class EditPasswordDialog extends DialogFragment implements View.OnClickLi
     private EditText current_password, new_password;
     Button confirm;
     TextView forgot_password;
-
-    public interface OnRequestNewPasswordListener{
-        void onRequest(String current_password, String new_password);
-    }
-
-    OnRequestNewPasswordListener listener;
+    private LoadingDialog loadingDialog;
 
     @Nullable
     @Override
@@ -47,27 +50,17 @@ public class EditPasswordDialog extends DialogFragment implements View.OnClickLi
         new_password = view.findViewById(R.id.new_password);
         forgot_password = view.findViewById(R.id.forgot_password);
         confirm = view.findViewById(R.id.confirm_password);
+        loadingDialog = new LoadingDialog(getActivity());
 
         forgot_password.setOnClickListener(this);
         confirm.setOnClickListener(this);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            listener = (OnRequestNewPasswordListener) getActivity();
-        }
-        catch (ClassCastException e){
-            Log.d(TAG, e.getMessage());
-        }
-    }
-
-    @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         final Activity activity = getActivity();
-        if (activity instanceof DialogInterface.OnDismissListener){
+        if (activity instanceof DialogInterface.OnDismissListener) {
             ((DialogInterface.OnDismissListener) activity).onDismiss(dialog);
         }
     }
@@ -86,25 +79,49 @@ public class EditPasswordDialog extends DialogFragment implements View.OnClickLi
         switch (v.getId()){
             case(R.id.confirm_password):
 
-                if (current_password.getText().toString().isEmpty()){
+                if (current_password.getText().toString().isEmpty()) {
                     current_password.setError("Enter your password");
                     current_password.requestFocus();
                     return;
                 }
-                if (new_password.getText().toString().isEmpty()){
+                if (new_password.getText().toString().isEmpty()) {
                     new_password.setError("Enter a new password");
                     new_password.requestFocus();
-                }
-                else{
-                    listener.onRequest(current_password.getText().toString(), new_password.getText().toString());
-                    getDialog().dismiss();
-                }
+                } else requestPasswordChange(current_password.getText().toString(), new_password.getText().toString());
                 break;
 
             case(R.id.forgot_password):
-                // GO TO ACTIVITY
+                ForgotPasswordDialog dialog = new ForgotPasswordDialog();
+                dialog.show(getActivity().getSupportFragmentManager(), "forgot_password");
                 break;
         }
     }
 
+    public void requestPasswordChange(String currentPassword, String newPassword) {
+        loadingDialog.show();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null && user.getEmail() != null) {
+            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
+            user.reauthenticate(credential).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "user was re-authenticated");
+                    user.updatePassword(newPassword).addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            Toast toast = Toast.makeText(getActivity(), "Password updated successfully", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 400);
+                            toast.show();
+                            loadingDialog.dismiss();
+                            getDialog().dismiss();
+                        }
+
+                    });
+                } else {
+                    loadingDialog.dismiss();
+                    Toast toast = Toast.makeText(getActivity(), "Invalid Password", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 400);
+                    toast.show();
+                }
+            });
+        }
+    }
 }

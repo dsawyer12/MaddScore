@@ -145,14 +145,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/linear"
-        android:layout_above="@+id/relative">
+        android:layout_above="@+id/profile_image_parent">
 
-        <include layout="@layout/fragment_squad_list"/>
+        <include layout="@layout/fragment_squad_member_list"/>
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/relative"
+        android:id="@+id/profile_image_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

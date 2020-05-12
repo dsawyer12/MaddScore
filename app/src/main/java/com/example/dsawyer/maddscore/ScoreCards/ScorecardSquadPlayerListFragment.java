@@ -29,7 +29,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
 
 
 public class ScorecardSquadPlayerListFragment extends Fragment {
@@ -93,7 +92,7 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     mUser = dataSnapshot.getValue(User.class);
-                    if (mUser != null && mUser.getMySquad() != null)
+                    if (mUser != null && mUser.getSquad() != null)
                         getSquad();
                     else
                         Log.d(TAG, "user DOES NOT  have a squad");
@@ -110,7 +109,7 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
     }
 
     private void getSquad() {
-        Query query = ref.child("squads").child(mUser.getMySquad());
+        Query query = ref.child("squads").child(mUser.getSquad());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -135,7 +134,7 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userList.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    for (String key : mySquad.getUserList().keySet()) {
+                    for (String key : mySquad.getMemberList().keySet()) {
                         if (ds.getValue(User.class) != null && ds.getValue(User.class).getUserID().equals(key)) {
                             userList.add(ds.getValue(User.class));
                         }
@@ -159,7 +158,7 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 stats.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    for (String key : mySquad.getUserList().keySet()) {
+                    for (String key : mySquad.getMemberList().keySet()) {
                         if (ds.getKey() != null && ds.getKey().equals(key)) {
                             stats.add(ds.getValue(UserStats.class));
                         }
