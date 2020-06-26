@@ -6,7 +6,7 @@ import android.os.Parcelable;
 public class PostCommentUserMap implements Parcelable {
 
     private PostComment postComment;
-    private String name, username, PhotoUrl;
+    private String name, username, photoUrl;
 
     public PostCommentUserMap() {  }
 
@@ -14,10 +14,17 @@ public class PostCommentUserMap implements Parcelable {
         this.postComment = postComment;
     }
 
+    public PostCommentUserMap(PostComment postComment, User user) {
+        this.postComment = postComment;
+        this.name = user.getName();
+        this.username = user.getUsername();
+        this.photoUrl = user.getPhotoUrl();
+    }
+
     protected PostCommentUserMap(Parcel in) {
         name = in.readString();
         username = in.readString();
-        PhotoUrl = in.readString();
+        photoUrl = in.readString();
     }
 
     public static final Creator<PostCommentUserMap> CREATOR = new Creator<PostCommentUserMap>() {
@@ -57,11 +64,11 @@ public class PostCommentUserMap implements Parcelable {
     }
 
     public String getPhotoUrl() {
-        return PhotoUrl;
+        return photoUrl;
     }
 
     public void setPhotoUrl(String photoUrl) {
-        PhotoUrl = photoUrl;
+        this.photoUrl = photoUrl;
     }
 
     @Override
@@ -73,6 +80,6 @@ public class PostCommentUserMap implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(username);
-        dest.writeString(PhotoUrl);
+        dest.writeString(photoUrl);
     }
 }

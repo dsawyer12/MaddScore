@@ -1,6 +1,5 @@
 package com.example.dsawyer.maddscore.Squad;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,10 +40,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.OnPostDeletedListener {
+public class SocialFragment extends Fragment implements
+        ConfirmDeletePostDialog.OnPostDeletedListener,
+        PostFragment.OnPostsUpdated,
+        PostCommentDialog.OnPostChangeListener {
     private static final String TAG = "TAG";
 
-    private DatabaseReference ref;
     private FirebaseUser currentUser;
     private User mUser;
     private Squad mSquad;
@@ -54,7 +55,7 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
     private ArrayList<PostUserMap> posts;
 
     final int loadCount = 20;
-    int totalItems = 0, finished = 0, firstVisibleItem, lastCompleteVisibleItem;
+    int totalItems = 0, finished = 0, lastVisibleItem;
     boolean isLoading = false, isLastItemReached = false;
     String lastKey, lastNode;
 
@@ -64,6 +65,30 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
     TextView no_activity, squad_name, squad_id;
     LoadingDialog loadingDialog;
 
+    @Override
+    public void onPostAdd(Post newPost) {
+        Log.d(TAG, "onPostAdd: ");
+        if (getActivity() != null) {
+            Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("postFragment");
+            if (fragment != null)
+                getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
+
+        if (adapter != null) {
+            adapter.addItem(new PostUserMap(newPost, mUser.getName(), mUser.getUsername(), mUser.getPhotoUrl()));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onPostEdit(PostUserMap updatedPost) {
+        Log.d(TAG, "onPostEdit: ");
+        if (getActivity() != null) {
+            Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("postFragment");
+            if (fragment != null)
+                getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
+    }
 
     @Override
     public void onDelete(PostUserMap postMap) {
@@ -71,6 +96,13 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
             adapter.getPosts().remove(postMap);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onCommentAdded() {
+        Log.d(TAG, "onCommentAdded: ");
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     @Nullable
@@ -97,8 +129,11 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
             Bundle args = new Bundle();
             args.putParcelable("mUser", mUser);
             postFragment.setArguments(args);
-            if (getActivity() != null)
-                ((SquadActivity) getActivity()).setFragment(postFragment, R.id.main_frame, "postFragment");
+            postFragment.setTargetFragment(this, 1000);
+            if (getFragmentManager() != null)
+                postFragment.show(getFragmentManager(), "postFragment");
+//            if (getActivity() != null)
+//                ((SquadActivity) getActivity()).setFragment(postFragment, R.id.main_frame, "postFragment");
         });
 
         if (this.getArguments() != null) {
@@ -110,7 +145,6 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
             }
         }
 
-        ref = FirebaseDatabase.getInstance().getReference();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -129,10 +163,9 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
                     else fab.show();
 
                     totalItems = layoutManager.getItemCount();
-                    firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
-                    lastCompleteVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition();
-//
-                    if (!isLoading && (lastCompleteVisibleItem <= totalItems) && totalItems >= (firstVisibleItem + loadCount)) {
+                    lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+
+                    if (!isLoading && (lastVisibleItem + 1) >= totalItems) {
                         getSocialPosts();
                         isLoading = true;
                     }
@@ -149,32 +182,39 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
         listener = (v, position) -> {
             switch (v.getId()) {
                 case (R.id.post_like):
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                            .child("socialPosts")
+                            .child(mUser.getSquad())
+                            .child(adapter.getPost(position).getPostID())
+                            .child("userLikesList")
+                            .child(currentUser.getUid());
+
                     if (adapter.getPost(position).getUserLikesList() != null) {
                         if (adapter.getPost(position).getUserLikesList().containsKey(currentUser.getUid())) {
                             adapter.getPost(position).getUserLikesList().remove(currentUser.getUid());
-                            ref.child("socialPosts").child(mUser.getSquad()).child(adapter.getPost(position).getPostID()).child("userLikesList").child(currentUser.getUid()).removeValue();
+                            ref.removeValue();
                         } else {
                             adapter.getPost(position).getUserLikesList().put(currentUser.getUid(), true);
-                            ref.child("socialPosts").child(mUser.getSquad()).child(adapter.getPost(position).getPostID()).child("userLikesList").child(currentUser.getUid()).setValue(true);
+                            ref.setValue(true);
                         }
                     } else {
                         HashMap<String, Boolean> userList = new HashMap<>();
                         userList.put(currentUser.getUid(), true);
                         adapter.getPost(position).setUserLikesList(userList);
-                        ref.child("socialPosts").child(mUser.getSquad()).child(adapter.getPost(position).getPostID()).child("userLikesList").child(currentUser.getUid()).setValue(true);
+                        ref.setValue(true);
                     }
                     break;
 
                 case (R.id.post_comment):
                     PostCommentDialog pc = new PostCommentDialog();
-                    String postID = adapter.getPost(position).getPostID();
+                    Post post = adapter.getPost(position);
                     Bundle args = new Bundle();
-                    args.putString("post_ID", postID);
+                    args.putParcelable("post", post);
                     args.putParcelable("user", mUser);
                     pc.setArguments(args);
-                    pc.setTargetFragment(SocialFragment.this, 1001);
+                    pc.setTargetFragment(this, 1001);
                     if (getFragmentManager() != null)
-                        pc.show(getFragmentManager(), "courseSelector");
+                        pc.show(getFragmentManager(), "commentDialog");
                     break;
 
                 case (R.id.post_options):
@@ -190,7 +230,10 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
                                         args1.putParcelable("mUser", mUser);
                                         args1.putParcelable("postMap", adapter.getPosts().get(position));
                                         postFragment.setArguments(args1);
-                                        ((SquadActivity) getActivity()).setFragment(postFragment, R.id.main_frame, "postFragment");
+                                        postFragment.setTargetFragment(this, 1002);
+                                        if (getFragmentManager() != null)
+                                            postFragment.show(getFragmentManager(), "postFragment");
+//                                        ((SquadActivity) getActivity()).setFragment(postFragment, R.id.main_frame, "postFragment");
                                     }
                                     return true;
 
@@ -219,21 +262,28 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
 
     public void getLastPostKey() {
         Log.d(TAG, "getLastPostKey: called");
+        isLoading = true;
         loadingDialog.show();
-        Query query = ref.child("socialPosts").child(mUser.getSquad()).limitToFirst(1);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child("socialPosts")
+                .child(mUser.getSquad());
+
+        Query query = ref.orderByChild("postID").limitToFirst(2);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     lastKey = ds.getKey();
                     Log.d(TAG, "last key : " + lastKey);
+                    break;
                 }
-                if (lastKey != null) {
+
+                if (lastKey != null)
                     no_activity.setVisibility(View.GONE);
-                }
-                else {
+                else
                     no_activity.setVisibility(View.VISIBLE);
-                }
+
                 getSocialPosts();
             }
 
@@ -246,14 +296,17 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
 
     public void getSocialPosts() {
         Log.d(TAG, "getSocialPosts: called");
+        loadingDialog.show();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("socialPosts").child(mUser.getSquad());
+
         posts = new ArrayList<>();
 
         if (!isLastItemReached) {
             Query postQuery;
             if (TextUtils.isEmpty(lastNode))
-                postQuery = ref.child("socialPosts").child(mUser.getSquad()).orderByKey().limitToLast(loadCount);
+                postQuery = ref.orderByKey().limitToLast(loadCount);
             else
-                postQuery = ref.child("socialPosts").child(mUser.getSquad()).orderByKey().endAt(lastNode).limitToLast(loadCount);
+                postQuery = ref.orderByKey().endAt(lastNode).limitToLast(loadCount);
 
             postQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -261,8 +314,9 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
                     Log.d(TAG, "child count : " + dataSnapshot.getChildrenCount());
                     if (dataSnapshot.hasChildren()) {
                         posts.clear();
+
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            Log.d(TAG, "RETRIEVED KEY : \n" + ds.getKey());
+                            Log.d(TAG, "RETRIEVED KEY : " + ds.getKey());
                             Post post = ds.getValue(Post.class);
                             posts.add(new PostUserMap(post));
                         }
@@ -280,14 +334,18 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
                                 Log.d(TAG, "last database key has been retrieved");
                             }
 
-                            Query userQuery;
                             PostUserMap currentPost;
+                            DatabaseReference userRef;
+
                             for (int i = 0; i < posts.size(); i++) {
                                 currentPost = posts.get(i);
 
-                                userQuery = ref.child("users").child(currentPost.getPost().getCreatorID());
+                                userRef = FirebaseDatabase.getInstance().getReference()
+                                        .child("users")
+                                        .child(currentPost.getPost().getCreatorID());
+
                                 PostUserMap finalCurrentPost = currentPost;
-                                userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         finished++;
@@ -304,6 +362,7 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
                                                 Collections.reverse(posts);
                                                 adapter.addItems(posts);
                                                 loadingDialog.dismiss();
+                                                isLoading = false;
                                             }
                                         }
                                     }
@@ -317,7 +376,7 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
                         }
 
                     } else {
-                        Log.d(TAG, "NO CHILDREN...........");
+                        Log.d(TAG, "No children");
                         loadingDialog.dismiss();
                         isLoading = false;
                         isLastItemReached = true;
@@ -332,12 +391,17 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
                 }
             });
 
-            isLoading = false;
+            /****
+             The line of code below is causing the onScroll listener to fire.
+             Need to find a way to wait for the asynchronous task to finish before setting isLoading to false.
+             How to make it synchronous?
+             *****/
+//            isLoading = false;
 
             postQuery.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Log.d(TAG, "onChildAdded: ");
+                    Log.d(TAG, "social posts - onChildAdded: ");
                     no_activity.setVisibility(View.GONE);
                     if (adapter != null)
                         adapter.notifyDataSetChanged();
@@ -345,28 +409,28 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
 
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Log.d(TAG, "onChildChanged: ");
+                    Log.d(TAG, "social posts - onChildChanged: " + dataSnapshot.getKey());
                     if (adapter != null)
                         adapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "onChildRemoved: ");
+                    Log.d(TAG, "social posts - onChildRemoved: ");
                     if (adapter != null)
                         adapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Log.d(TAG, "onChildMoved: ");
+                    Log.d(TAG, "social posts - onChildMoved: ");
                     if (adapter != null)
                         adapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d(TAG, "onCancelled: ");
+                    Log.d(TAG, "social posts - onCancelled: ");
                     if (adapter != null)
                         adapter.notifyDataSetChanged();
                 }
@@ -378,9 +442,5 @@ public class SocialFragment extends Fragment implements ConfirmDeletePostDialog.
             loadingDialog.dismiss();
         }
     }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
 }
+

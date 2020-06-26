@@ -1,5 +1,6 @@
 package com.example.dsawyer.maddscore.Social;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,17 +14,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.dsawyer.maddscore.Objects.Post;
 import com.example.dsawyer.maddscore.Objects.PostComment;
 import com.example.dsawyer.maddscore.Objects.PostCommentUserMap;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
+import com.example.dsawyer.maddscore.Squad.SocialFragment;
 import com.example.dsawyer.maddscore.Utils.LoadingDialog;
 import com.example.dsawyer.maddscore.Utils.PostCommentListRecyclerView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,8 +39,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.net.MulticastSocket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PostCommentDialog extends DialogFragment implements View.OnClickListener {
     private static final String TAG = "TAG";
@@ -41,9 +51,8 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
     private EditText comment_text;
     private ImageView comment_cancel, comment_send;
 
-    private DatabaseReference ref;
     private User mUser;
-    private String post_ID;
+    private Post post;
     private RecyclerView recyclerView;
     private ArrayList<PostCommentUserMap> comments;
     private LoadingDialog loadingDialog;
@@ -52,8 +61,13 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
 
     final int loadCount = 20;
     int totalItems = 0, finished = 0, firstVisibleItem, lastCompleteVisibleItem;
-    boolean isLoading = false, isLastItemAccountedFor = false;
+    boolean isLoading = false, isLastItemReached = false;
     String lastKey, lastNode;
+
+    private OnPostChangeListener listener;
+    public interface OnPostChangeListener {
+        void onCommentAdded();
+    }
 
     @Nullable
     @Override
@@ -64,8 +78,6 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        ref = FirebaseDatabase.getInstance().getReference();
 
         recyclerView = view.findViewById(R.id.comment_Recycler);
         comment_cancel = view.findViewById(R.id.comment_cancel);
@@ -79,16 +91,15 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
 
         Bundle args = this.getArguments();
         if (args != null) {
-            post_ID = args.getString("post_ID");
+            post = args.getParcelable("post");
             mUser = args.getParcelable("user");
         }
 
-        if (post_ID != null && mUser != null) {
+        if (post != null && mUser != null) {
             getLastCommentKey();
 
             layoutManager = new LinearLayoutManager(getActivity());
-//            layoutManager.setReverseLayout(true);
-//            layoutManager.setStackFromEnd(true);
+            layoutManager.setStackFromEnd(true);
             recyclerView.setLayoutManager(layoutManager);
             adapter = new PostCommentListRecyclerView(getActivity());
             recyclerView.setAdapter(adapter);
@@ -98,34 +109,38 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                     totalItems = layoutManager.getItemCount();
                     firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+                    int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
                     lastCompleteVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition();
 
-                    if (!isLoading && (lastCompleteVisibleItem <= totalItems) && totalItems >= (firstVisibleItem + loadCount)) {
+                    Log.d(TAG, "first visible item: " + firstVisibleItem);
+                    Log.d(TAG, "last visible item: " + lastVisibleItem);
+                    Log.d(TAG, "total: " + totalItems);
+
+                    if (!isLoading && firstVisibleItem == 0) {
                         getComments();
                         isLoading = true;
                     }
+
+//                    if (!isLoading && (lastCompleteVisibleItem <= totalItems) && totalItems >= (firstVisibleItem + loadCount)) {
+//                        getComments();
+//                        isLoading = true;
+//                    }
                 }
             });
         }
         else {
             // error : something went wrong.
         }
+    }
 
-        comment_text.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.toString().length() == 0)
-                    comment_send.setEnabled(false);
-                else
-                    comment_send.setEnabled(true);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {  }
-        });
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (SocialFragment) getTargetFragment();
+        } catch (Exception e) {
+            Log.d(TAG, "onAttach: " + e.getMessage());
+        }
     }
 
     @Override
@@ -141,40 +156,67 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
     }
 
     private void publishComment() {
-        long date = System.currentTimeMillis();
-        String comment = comment_text.getText().toString();
+        loadingDialog.show();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        String comment = comment_text.getText().toString().trim();
+        if (!comment.isEmpty()) {
+            long date = System.currentTimeMillis();
 
-        String commentId = ref.child("socialComments").child(mUser.getSquad()).child(post_ID).push().getKey();
+            String commentId = ref.child("socialComments").child(mUser.getSquad()).child(post.getPostID()).push().getKey();
 
-        PostComment postComment = new PostComment(
-                mUser.getUserID(),
-                post_ID,
-                commentId,
-                comment,
-                date
-        );
+            PostComment postComment = new PostComment(
+                    mUser.getUserID(),
+                    post.getPostID(),
+                    commentId,
+                    comment,
+                    date
+            );
 
-        if (commentId != null) {
-            ref.child("socialComments").child(mUser.getSquad()).child(post_ID).child(commentId).setValue(postComment)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-                        } else
-                            Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
+            if (commentId != null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("/socialComments/" + mUser.getSquad() + "/" + post.getPostID() + "/" + commentId, postComment);
+                map.put("/socialPosts/" + mUser.getSquad() + "/" + post.getPostID() + "/comments/" + commentId, true);
 
-                        getDialog().dismiss();
-                    });
-        } else
-            Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                ref.updateChildren(map).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        PostCommentUserMap userMap = new PostCommentUserMap(postComment, mUser);
+                        adapter.addItem(userMap);
+                        listener.onCommentAdded();
+                        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                        comment_text.getText().clear();
+                        loadingDialog.dismiss();
+                    }
+                    else {
+                        loadingDialog.dismiss();
+                        Toast.makeText(getActivity(), "Failed.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                loadingDialog.dismiss();
+                Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            loadingDialog.dismiss();
+            Toast.makeText(getActivity(), "Nothing to post.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getLastCommentKey() {
-        Query query = ref.child("socialComments").child(mUser.getSquad()).child(post_ID).limitToFirst(1);
+        loadingDialog.show();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child("socialComments")
+                .child(mUser.getSquad())
+                .child(post.getPostID());
+
+        Query query = ref.orderByKey().limitToLast(2);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren())
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     lastKey = ds.getKey();
+                    break;
+                }
                 Log.d(TAG, "last key : " + lastKey);
                 getComments();
             }
@@ -187,23 +229,37 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
     }
 
     private void getComments() {
+        Log.d(TAG, "getComments: called");
         loadingDialog.show();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
         comments = new ArrayList<>();
 
-        if (!isLastItemAccountedFor) {
+        if (!isLastItemReached) {
             Query commentQuery;
             if (TextUtils.isEmpty(lastNode))
-                commentQuery = ref.child("socialComments").child(mUser.getSquad()).child(post_ID).orderByKey().limitToLast(loadCount);
+                commentQuery = ref.child("socialComments")
+                        .child(mUser.getSquad())
+                        .child(post.getPostID())
+                        .orderByChild("commentID")
+                        .limitToLast(loadCount);
             else
-                commentQuery = ref.child("socialComments").child(mUser.getSquad()).child(post_ID).orderByKey().endAt(lastNode).limitToLast(loadCount);
+                commentQuery = ref.child("socialComments")
+                        .child(mUser.getSquad())
+                        .child(post.getPostID())
+                        .orderByChild("commentID")
+                        .endAt(lastNode)
+                        .limitToLast(loadCount);
 
             commentQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "child count : " + dataSnapshot.getChildrenCount());
                     if (dataSnapshot.hasChildren()) {
                         comments.clear();
 
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            Log.d(TAG, "RETRIEVED KEY : " + ds.getKey());
                             PostComment pc = ds.getValue(PostComment.class);
                             comments.add(new PostCommentUserMap(pc));
                         }
@@ -217,7 +273,7 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
                             lastNode = comments.get(0).getPostComment().getCommentID();
                             Log.d(TAG, "Last Node : " + lastNode);
                             if (lastNode.equals(lastKey)) {
-                                isLastItemAccountedFor = true;
+                                isLastItemReached = true;
                                 Log.d(TAG, "last database key has been retrieved");
                             }
 
@@ -227,6 +283,7 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
                                 currentComment = comments.get(i);
 
                                 userQuery = ref.child("users").child(currentComment.getPostComment().getUserID());
+
                                 PostCommentUserMap finalCurrentComment = currentComment;
                                 userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -243,73 +300,73 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
 
                                             if (finished == comments.size()) {
                                                 finished = 0;
-                                                Collections.reverse(comments);
+//                                                Collections.reverse(comments);
                                                 adapter.addItems(comments);
+                                                isLoading = false;
+                                                loadingDialog.dismiss();
                                             }
                                         }
                                     }
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        loadingDialog.dismiss();
                                         isLoading = false;
+                                        loadingDialog.dismiss();
                                     }
                                 });
                             }
                         }
                     } else {
-                        loadingDialog.dismiss();
+                        Log.d(TAG, "No children");
                         isLoading = false;
-                        isLastItemAccountedFor = true;
+                        loadingDialog.dismiss();
+                        isLastItemReached = true;
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    loadingDialog.dismiss();
                     isLoading = false;
+                    loadingDialog.dismiss();
                 }
             });
 
-            isLoading = false;
-            loadingDialog.dismiss();
-
-            commentQuery.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Log.d(TAG, "onChildAdded: ");
-                    if (adapter != null)
-                        adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Log.d(TAG, "onChildChanged: ");
-                    if (adapter != null)
-                        adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "onChildRemoved: ");
-                    if (adapter != null)
-                        adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Log.d(TAG, "onChildMoved: ");
-                    if (adapter != null)
-                        adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d(TAG, "onCancelled: ");
-                    if (adapter != null)
-                        adapter.notifyDataSetChanged();
-                }
-            });
+//            commentQuery.addChildEventListener(new ChildEventListener() {
+//                @Override
+//                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                    Log.d(TAG, "onChildAdded: ");
+//                    if (adapter != null)
+//                        adapter.notifyDataSetChanged();
+//                }
+//
+//                @Override
+//                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                    Log.d(TAG, "onChildChanged: ");
+//                    if (adapter != null)
+//                        adapter.notifyDataSetChanged();
+//                }
+//
+//                @Override
+//                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//                    Log.d(TAG, "onChildRemoved: ");
+//                    if (adapter != null)
+//                        adapter.notifyDataSetChanged();
+//                }
+//
+//                @Override
+//                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                    Log.d(TAG, "onChildMoved: ");
+//                    if (adapter != null)
+//                        adapter.notifyDataSetChanged();
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//                    Log.d(TAG, "onCancelled: ");
+//                    if (adapter != null)
+//                        adapter.notifyDataSetChanged();
+//                }
+//            });
 
         } else {
             isLoading = false;
@@ -320,9 +377,11 @@ public class PostCommentDialog extends DialogFragment implements View.OnClickLis
     @Override
     public void onResume() {
         super.onResume();
-        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-        params.width = RelativeLayout.LayoutParams.MATCH_PARENT;
-        params.height = RelativeLayout.LayoutParams.MATCH_PARENT;
-        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        if (getDialog().getWindow() != null) {
+            WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
+            params.width = RelativeLayout.LayoutParams.MATCH_PARENT;
+            params.height = RelativeLayout.LayoutParams.MATCH_PARENT;
+            getDialog().getWindow().setAttributes(params);
+        }
     }
 }

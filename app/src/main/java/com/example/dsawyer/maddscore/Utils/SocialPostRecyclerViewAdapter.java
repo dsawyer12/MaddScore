@@ -26,6 +26,7 @@ import java.util.Locale;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SocialPostRecyclerViewAdapter extends RecyclerView.Adapter<SocialPostRecyclerViewAdapter.ViewHolder> {
+
     private static final String TAG = "TAG";
 
     private String userID;
@@ -52,6 +53,13 @@ public class SocialPostRecyclerViewAdapter extends RecyclerView.Adapter<SocialPo
         Log.d(TAG, "addItems: called");
         int initSize = this.posts.size();
         this.posts.addAll(posts);
+        notifyItemRangeChanged(initSize, posts.size());
+    }
+
+    public void addItem(PostUserMap post) {
+        Log.d(TAG, "addItem: called");
+        int initSize = this.posts.size();
+        this.posts.add(0, post);
         notifyItemRangeChanged(initSize, posts.size());
     }
 
@@ -132,7 +140,10 @@ public class SocialPostRecyclerViewAdapter extends RecyclerView.Adapter<SocialPo
         }
 
         if (posts.get(holder.getAdapterPosition()).getPost().getComments() != null) {
-            holder.numComments.setText(String.valueOf(posts.get(holder.getAdapterPosition()).getPost().getComments().size()));
+            if (posts.get(holder.getAdapterPosition()).getPost().getComments().size() == 0)
+                holder.numComments.setText("");
+            else
+                holder.numComments.setText(String.valueOf(posts.get(holder.getAdapterPosition()).getPost().getComments().size()));
 
         } else holder.numComments.setText("");
 

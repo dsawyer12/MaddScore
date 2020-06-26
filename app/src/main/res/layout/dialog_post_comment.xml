@@ -36,8 +36,7 @@
             android:id="@+id/comment_Recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/send_bar"
-            android:background="@color/PrimaryBackground2">
+            android:layout_above="@+id/send_bar">
 
         </android.support.v7.widget.RecyclerView>
 

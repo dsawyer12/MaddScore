@@ -24,6 +24,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
+                                                <entry key="opacityPercent" value="80" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -34,7 +35,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/Applications/IDE&amp;TextEditoirs/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/toggle/ic_star_border_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_add_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -55,8 +56,8 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="imageAsset" value="$USER_HOME$/Pictures/my-icons-collection/png/009-square.png" />
-                                      <entry key="outputName" value="ic_rate_open" />
+                                      <entry key="imageAsset" value="C:\Users\d_saw\Pictures\my-icons-collection\png\009-square.png" />
+                                      <entry key="outputName" value="ic_add" />
                                       <entry key="theme" value="HOLO_DARK" />
                                       <entry key="themeColor" value="000000" />
                                     </map>

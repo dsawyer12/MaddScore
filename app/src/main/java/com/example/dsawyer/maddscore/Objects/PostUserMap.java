@@ -17,6 +17,13 @@ public class PostUserMap implements Parcelable {
         this.post = post;
     }
 
+    public PostUserMap(Post post, String name, String username, String photoUrl) {
+        this.post = post;
+        this.name = name;
+        this.username = username;
+        PhotoUrl = photoUrl;
+    }
+
     protected PostUserMap(Parcel in) {
         post = in.readParcelable(Post.class.getClassLoader());
         name = in.readString();
