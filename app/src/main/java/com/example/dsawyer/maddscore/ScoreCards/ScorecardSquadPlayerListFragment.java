@@ -39,7 +39,6 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
     private User mUser;
     private Squad mySquad;
     private ArrayList<User> userList;
-    private ArrayList<UserStats> stats;
     ArrayList<User> cardUsers;
     SquadMemberListAdapter adapter;
 
@@ -60,7 +59,6 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
 
         userList = new ArrayList<>();
         cardUsers = new ArrayList<>();
-        stats = new ArrayList<>();
 
         getActivity().getIntent().putParcelableArrayListExtra("squadUsers", cardUsers);
 
@@ -68,20 +66,17 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
 
         getUser();
 
-        squadList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SparseBooleanArray sparseBooleanArray = squadList.getCheckedItemPositions();
-                if (sparseBooleanArray.get(position)){
-                    cardUsers.add(userList.get(position));
-                    view.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryTransparent));
-                }
-                else if(!sparseBooleanArray.get(position)){
-                    cardUsers.remove(userList.get(position));
-                    view.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.PrimaryBackground));
-                }
-                getActivity().getIntent().putExtra("squadUsers", cardUsers);
+        squadList.setOnItemClickListener((parent, view1, position, id) -> {
+            SparseBooleanArray sparseBooleanArray = squadList.getCheckedItemPositions();
+            if (sparseBooleanArray.get(position)){
+                cardUsers.add(userList.get(position));
+                view1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryTransparent));
             }
+            else if(!sparseBooleanArray.get(position)){
+                cardUsers.remove(userList.get(position));
+                view1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.PrimaryBackground));
+            }
+            getActivity().getIntent().putExtra("squadUsers", cardUsers);
         });
     }
 
@@ -117,7 +112,7 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
                     mySquad = dataSnapshot.getValue(Squad.class);
                     setSquadList();
                 }
-                else{
+                else {
                     //handle
                 }
             }
@@ -138,34 +133,13 @@ public class ScorecardSquadPlayerListFragment extends Fragment {
                         if (ds.getValue(User.class) != null && ds.getValue(User.class).getUserID().equals(key)) {
                             userList.add(ds.getValue(User.class));
                         }
-                        else{
+                        else {
                             //handle
                         }
                     }
                 }
-                getUserStats();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
-    }
-
-    private void getUserStats() {
-        Query query = ref.child("userStats");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                stats.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    for (String key : mySquad.getMemberList().keySet()) {
-                        if (ds.getKey() != null && ds.getKey().equals(key)) {
-                            stats.add(ds.getValue(UserStats.class));
-                        }
-                    }
-                }
-                Collections.sort(stats);
-                adapter = new SquadMemberListAdapter(getActivity(), userList, stats);
+                Collections.sort(userList);
+                adapter = new SquadMemberListAdapter(getActivity(), userList);
                 squadList.setAdapter(adapter);
                 squadList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
             }

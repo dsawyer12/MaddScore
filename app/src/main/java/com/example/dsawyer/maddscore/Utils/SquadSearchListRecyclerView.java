@@ -49,12 +49,7 @@ public class SquadSearchListRecyclerView extends RecyclerView.Adapter<SquadSearc
 //            Glide.with(context).load(R.mipmap.default_profile_img).into(holder.creator_photId);
 //        }
 //
-//        holder.rootView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                listener.onSquadSelected(squadList.get(holder.getAdapterPosition()));
-//            }
-//        });
+        holder.rootView.setOnClickListener(v -> listener.onSquadSelected(squadList.get(holder.getAdapterPosition())));
     }
 
     @Override

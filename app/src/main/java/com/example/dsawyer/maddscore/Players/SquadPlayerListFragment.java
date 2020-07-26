@@ -28,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class SquadPlayerListFragment extends Fragment{
+public class SquadPlayerListFragment extends Fragment {
     private static final String TAG = "TAG";
 
     private DatabaseReference ref;
@@ -38,7 +38,6 @@ public class SquadPlayerListFragment extends Fragment{
     private Squad mySquad;
 
     private ArrayList<User> userList = new ArrayList<>();
-    private ArrayList<UserStats> userStatsList = new ArrayList<>();
 
     private RecyclerView squad_list;
     private SquadListRecyclerView adapter;
@@ -75,12 +74,7 @@ public class SquadPlayerListFragment extends Fragment{
 
         squad_list = view.findViewById(R.id.squad_list);
 
-        listener = new SquadListRecyclerView.OnItemClicked() {
-            @Override
-            public void onClick(User user) {
-                onSquadPlayerSelected.onSquadPlayerSelection(user);
-            }
-        };
+        listener = user -> onSquadPlayerSelected.onSquadPlayerSelection(user);
 
         getSquad();
     }
@@ -137,30 +131,7 @@ public class SquadPlayerListFragment extends Fragment{
                     }
                 }
 
-                getSquadUserStats();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
-    public void getSquadUserStats() {
-        Query query = ref.child("userStats");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userStatsList.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    for (String key : mySquad.getMemberList().keySet()) {
-                        if (ds.getKey().equals(key))
-                            userStatsList.add(ds.getValue(UserStats.class));
-                    }
-                }
-                adapter = new SquadListRecyclerView(getActivity(), listener, userList, userStatsList);
+                adapter = new SquadListRecyclerView(getActivity(), listener, userList);
                 squad_list.setAdapter(adapter);
                 squad_list.setLayoutManager(new LinearLayoutManager(getActivity()));
             }

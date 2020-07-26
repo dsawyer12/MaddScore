@@ -22,20 +22,18 @@ public class SquadMemberListAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<User> userList;
-    private ArrayList<UserStats> userStats;
 
-    private class ViewHolder {
+    private static class ViewHolder {
         TextView username;
         TextView name;
         TextView rank;
         CircleImageView playerImage;
     }
 
-    public SquadMemberListAdapter(Context context, ArrayList<User> userList, ArrayList<UserStats> userStats) {
+    public SquadMemberListAdapter(Context context, ArrayList<User> userList) {
         inflater = LayoutInflater.from(context);
         this.context = context;
         this.userList = userList;
-        this.userStats = userStats;
     }
 
     public int getCount() {
@@ -80,11 +78,11 @@ public class SquadMemberListAdapter extends BaseAdapter {
         holder.username.setText(userList.get(position).getUsername());
         holder.name.setText(userList.get(position).getName());
         for (int i = 0; i < userList.size(); i++) {
-            if (userStats.get(position).getUserID().equals(userList.get(i).getUserID())) {
-                holder.rank.setText(String.valueOf(userStats.get(position).getSquadRank()));
+            if (userList.get(position).getUserID().equals(userList.get(i).getUserID())) {
+                holder.rank.setText(String.valueOf(userList.get(position).getSquad_rank()));
             }
         }
-        holder.rank.setText(String.valueOf(userStats.get(position).getSquadRank()));
+        holder.rank.setText(String.valueOf(userList.get(position).getSquad_rank()));
         if (userList.get(position).getPhotoUrl() != null) {
             Glide.with(context).load(userList.get(position).getPhotoUrl()).into(holder.playerImage);
         }

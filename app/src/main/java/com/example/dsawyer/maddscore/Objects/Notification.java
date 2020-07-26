@@ -9,7 +9,7 @@ public class Notification implements Parcelable {
     public static final int SQUAD_REQUEST = 3;
     public static final int MESSAGE = 4;
 
-    private String notificationID, sender, senderName, senderPhotoID, squadID, squadName, receiver, head, snippet;
+    private String notificationID, senderID, squadID, receiverID, heading, snippet;
     private long dateSent;
     private int notificationType;
 
@@ -17,56 +17,42 @@ public class Notification implements Parcelable {
 
     /**   constructor for friend request   **/
     public Notification(String notificationID,
-                        String sender,
-                        String senderName,
-                        String senderPhotoID,
-                        String receiver,
+                        String senderID,
+                        String receiverID,
                         int notificationType,
                         long dateSent) {
         setNotificationID(notificationID);
-        setSender(sender);
-        setSenderName(senderName);
-        setSenderPhotoID(senderPhotoID);
-        setReceiver(receiver);
+        setSenderID(senderID);
+        setReceiverID(receiverID);
         setNotificationType(notificationType);
         setDateSent(dateSent);
     }
 
     /***    constructor for squad invite  **/
     public Notification(String notificationID,
-                        String sender,
-                        String senderName,
-                        String senderPhotoID,
+                        String senderID,
                         String squadID,
-                        String squadName,
-                        String receiver,
+                        String receiverID,
                         int notificationType,
                         long dateSent) {
         setNotificationID(notificationID);
-        setSender(sender);
-        setSenderName(senderName);
-        setSenderPhotoID(senderPhotoID);
+        setSenderID(senderID);
         setSquadID(squadID);
-        setSquadName(squadName);
-        setReceiver(receiver);
+        setReceiverID(receiverID);
         setNotificationType(notificationType);
         setDateSent(dateSent);
     }
 
     /***    constructor for message  **/
     public Notification(String notificationID,
-                        String sender,
-                        String senderName,
-                        String senderPhotoID,
-                        String receiver,
+                        String senderID,
+                        String receiverID,
                         int notificationType,
                         long dateSent,
                         String snippet) {
         setNotificationID(notificationID);
-        setSender(sender);
-        setSenderName(senderName);
-        setSenderPhotoID(senderPhotoID);
-        setReceiver(receiver);
+        setSenderID(senderID);
+        setReceiverID(receiverID);
         setNotificationType(notificationType);
         setDateSent(dateSent);
         setSnippet(snippet);
@@ -74,13 +60,10 @@ public class Notification implements Parcelable {
 
     protected Notification(Parcel in) {
         notificationID = in.readString();
-        sender = in.readString();
-        senderName = in.readString();
-        senderPhotoID = in.readString();
+        senderID = in.readString();
         squadID = in.readString();
-        squadName = in.readString();
-        receiver = in.readString();
-        head = in.readString();
+        receiverID = in.readString();
+        heading = in.readString();
         snippet = in.readString();
         dateSent = in.readLong();
         notificationType = in.readInt();
@@ -89,13 +72,10 @@ public class Notification implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(notificationID);
-        dest.writeString(sender);
-        dest.writeString(senderName);
-        dest.writeString(senderPhotoID);
+        dest.writeString(senderID);
         dest.writeString(squadID);
-        dest.writeString(squadName);
-        dest.writeString(receiver);
-        dest.writeString(head);
+        dest.writeString(receiverID);
+        dest.writeString(heading);
         dest.writeString(snippet);
         dest.writeLong(dateSent);
         dest.writeInt(notificationType);
@@ -126,36 +106,12 @@ public class Notification implements Parcelable {
         this.snippet = snippet;
     }
 
-    public String getSenderPhotoID() {
-        return senderPhotoID;
-    }
-
-    public void setSenderPhotoID(String senderPhotoID) {
-        this.senderPhotoID = senderPhotoID;
-    }
-
-    public String getSenderName() {
-        return senderName;
-    }
-
-    public void setSenderName(String senderName) {
-        this.senderName = senderName;
-    }
-
     public String getSquadID() {
         return squadID;
     }
 
     public void setSquadID(String squadID) {
         this.squadID = squadID;
-    }
-
-    public String getSquadName() {
-        return squadName;
-    }
-
-    public void setSquadName(String squadName) {
-        this.squadName = squadName;
     }
 
     public String getNotificationID() {
@@ -166,28 +122,28 @@ public class Notification implements Parcelable {
         this.notificationID = notificationID;
     }
 
-    public String getSender() {
-        return sender;
+    public String getSenderID() {
+        return senderID;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderID(String senderID) {
+        this.senderID = senderID;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getReceiverID() {
+        return receiverID;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setReceiverID(String receiverID) {
+        this.receiverID = receiverID;
     }
 
-    public String getHead() {
-        return head;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setHead(String head) {
-        this.head = head;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
     public long getDateSent() {

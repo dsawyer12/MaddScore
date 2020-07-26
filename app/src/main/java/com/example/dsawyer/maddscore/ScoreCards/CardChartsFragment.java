@@ -120,8 +120,8 @@ public class CardChartsFragment extends Fragment implements View.OnClickListener
         relativeLayout2 = view.findViewById(R.id.relLayout2);
         relativeLayout3 = view.findViewById(R.id.relLayout3);
 
-        relativeLayout5 = view.findViewById(R.id.relLayout5);
-        relativeLayout6 = view.findViewById(R.id.relLayout6);
+//        relativeLayout5 = view.findViewById(R.id.relLayout5);
+//        relativeLayout6 = view.findViewById(R.id.relLayout6);
 
         horizontal_scroll = view.findViewById(R.id.horizontal_scroll);
 

@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.dsawyer.maddscore.Objects.PostUserMap;
+import com.example.dsawyer.maddscore.ObjectMaps.PostUserMap;
 import com.example.dsawyer.maddscore.Objects.Squad;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
@@ -223,6 +223,13 @@ public class SocialFragment extends Fragment implements
                         popupMenu.inflate(R.menu.post_options_menu);
                         popupMenu.setOnMenuItemClickListener(menuItem -> {
                             switch (menuItem.getItemId()) {
+
+                                case(R.id.pin):
+                                    /** This option only needs to be visible to the Squad's Administrator **/
+                                    /** Create a Confirmation Fragment that asks if you want to replace the current pinned post with this one. **/
+
+                                    return true;
+
                                 case(R.id.edit):
                                     if (getActivity() != null) {
                                         PostFragment postFragment = new PostFragment();

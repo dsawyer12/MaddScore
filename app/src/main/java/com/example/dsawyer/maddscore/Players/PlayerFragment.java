@@ -22,8 +22,6 @@ import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Objects.Squad;
 import com.example.dsawyer.maddscore.Social.MessageFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -92,12 +90,11 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
         mUser = getUserFromBundle();
         if (mUser != null) {
-            if (mUser.getPhotoUrl() != null) {
+            if (mUser.getPhotoUrl() != null)
                 Glide.with(this).load(mUser.getPhotoUrl()).into(profileImage);
-            }
-            else {
+            else
                 Glide.with(this).load(R.mipmap.default_profile_img).into(profileImage);
-            }
+
             player_username.setText(mUser.getUsername());
             player_name.setText(mUser.getName());
             getCurrentUser();
@@ -367,8 +364,6 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                 notification = new Notification(
                         key,
                         UID,
-                        currentUser.getName(),
-                        currentUser.getPhotoUrl(),
                         mUser.getUserID(),
                         NOTIFICATION_TYPE,
                         date);
@@ -377,10 +372,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                 notification = new Notification(
                         key,
                         UID,
-                        currentUser.getName(),
-                        currentUser.getPhotoUrl(),
                         currentUser.getSquad(),
-                        squad.getSquadName(),
                         mUser.getUserID(),
                         NOTIFICATION_TYPE,
                         date);
@@ -391,46 +383,40 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                         .child(mUser.getUserID())
                         .child(key)
                         .setValue(notification)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
 
-                                    ActiveRequest activeRequest = new ActiveRequest(
-                                            UID,
-                                            mUser.getUserID(),
-                                            date,
-                                            key,
-                                            NOTIFICATION_TYPE);
+                                ActiveRequest activeRequest = new ActiveRequest(
+                                        UID,
+                                        mUser.getUserID(),
+                                        date,
+                                        key,
+                                        NOTIFICATION_TYPE);
 
-                                    ref.child("activeRequests").child(UID).child(key).setValue(activeRequest)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        switch (NOTIFICATION_TYPE) {
-                                                            case(Notification.FRIEND_REQUEST):
-                                                                active_friend_request = true;
-                                                                add_friend_txt.setText("Cancel Friend Request");
-                                                                // CHANGE ICON
-                                                                break;
-                                                            case(Notification.SQUAD_INVITE):
-                                                                active_squad_request = true;
-                                                                invite_to_squad_txt.setText("Cancel Squad Invite");
-                                                                // CHANGE ICON
-                                                                break;
-                                                        }
-                                                        Toast.makeText(getActivity(), "Request Sent Successfully", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    else
-                                                        Toast.makeText(getActivity(), "Failed to Send Request", Toast.LENGTH_SHORT).show();
+                                ref.child("activeRequests").child(UID).child(key).setValue(activeRequest)
+                                        .addOnCompleteListener(task1 -> {
+                                            if (task1.isSuccessful()) {
+                                                switch (NOTIFICATION_TYPE) {
+                                                    case(Notification.FRIEND_REQUEST):
+                                                        active_friend_request = true;
+                                                        add_friend_txt.setText("Cancel Friend Request");
+                                                        // CHANGE ICON
+                                                        break;
+                                                    case(Notification.SQUAD_INVITE):
+                                                        active_squad_request = true;
+                                                        invite_to_squad_txt.setText("Cancel Squad Invite");
+                                                        // CHANGE ICON
+                                                        break;
                                                 }
-                                            });
+                                                Toast.makeText(getActivity(), "Request Sent Successfully", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else
+                                                Toast.makeText(getActivity(), "Failed to Send Request", Toast.LENGTH_SHORT).show();
+                                        });
 
-                                }
-                                else
-                                    Toast.makeText(getActivity(), "Failed to Send Request", Toast.LENGTH_SHORT).show();
                             }
+                            else
+                                Toast.makeText(getActivity(), "Failed to Send Request", Toast.LENGTH_SHORT).show();
                         });
             }
         }
@@ -451,18 +437,15 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                             for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                 notification = ds.getValue(Notification.class);
 
-                                if (notification != null && notification.getSender().equals(UID) &&
+                                if (notification != null && notification.getSenderID().equals(UID) &&
                                         notification.getNotificationType() == NOTIFICATION_TYPE) {
 
                                     final String notificationID = ds.getKey();
-                                    ds.getRef().removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful())
-                                                cancelActiveRequest(NOTIFICATION_TYPE, notificationID);
-                                            else
-                                                Log.d(TAG, "onComplete: cancelRequest: notification was NOT removed");
-                                        }
+                                    ds.getRef().removeValue().addOnCompleteListener(task -> {
+                                        if (task.isSuccessful())
+                                            cancelActiveRequest(NOTIFICATION_TYPE, notificationID);
+                                        else
+                                            Log.d(TAG, "onComplete: cancelRequest: notification was NOT removed");
                                     });
                                 }
                                 else {
@@ -485,28 +468,25 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         Log.d(TAG, "cancelActiveRequest: ");
 
         ref.child("activeRequests").child(UID).child(notificationID).removeValue()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            switch (NOTIFICATION_TYPE) {
-                                case(Notification.FRIEND_REQUEST):
-                                    active_friend_request = false;
-                                    add_friend_txt.setText("Add Friend");
-                                    // CHANGE ICON
-                                    break;
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        switch (NOTIFICATION_TYPE) {
+                            case(Notification.FRIEND_REQUEST):
+                                active_friend_request = false;
+                                add_friend_txt.setText("Add Friend");
+                                // CHANGE ICON
+                                break;
 
-                                case(Notification.SQUAD_INVITE):
-                                    active_squad_request = false;
-                                    invite_to_squad_txt.setText("Invite to Squad");
-                                    // CHANGE ICON
-                                    break;
-                            }
-                            Toast.makeText(getActivity(), "Request Canceled", Toast.LENGTH_SHORT).show();
+                            case(Notification.SQUAD_INVITE):
+                                active_squad_request = false;
+                                invite_to_squad_txt.setText("Invite to Squad");
+                                // CHANGE ICON
+                                break;
                         }
-                        else
-                            Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Request Canceled", Toast.LENGTH_SHORT).show();
                     }
+                    else
+                        Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
                 });
     }
 

@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.example.dsawyer.maddscore.Objects.PostCommentUserMap;
+import com.example.dsawyer.maddscore.ObjectMaps.PostCommentUserMap;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Objects.PostComment;

@@ -1,30 +1,38 @@
 package com.example.dsawyer.maddscore.Squad;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dsawyer.maddscore.Objects.Notification;
+import com.example.dsawyer.maddscore.Objects.Pin;
+import com.example.dsawyer.maddscore.Objects.Post;
 import com.example.dsawyer.maddscore.Objects.Squad;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
-import com.example.dsawyer.maddscore.Objects.UserStats;
-import com.example.dsawyer.maddscore.Utils.SquadMemberListAdapter;
+import com.example.dsawyer.maddscore.Utils.SectionsStatePagerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,27 +41,26 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SquadSearchSelectionFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "TAG";
     private static final int NOTIFICATION_TYPE = 3;
 
     private DatabaseReference ref;
-    private String UID;
-    private User currentUser;
+    private FirebaseUser currentUser;
+    private User mUser;
 
     private Squad squad;
-    private ArrayList<String> members;
-    private ArrayList<User> squad_users;
-    private ArrayList<UserStats> stats;
+    private ArrayList<String> memberIds;
+    private ArrayList<User> members;
+
     ListView squad_list;
 
-    CircleImageView creator_photo;
-    TextView squad_name, creator_name, creator_username, num_members;
+    ViewPager viewPager;
+    SectionsStatePagerAdapter pagerAdapter;
+    ProgressBar progressBar;
+    TextView squad_name;
     Button request_join;
     ImageView back_btn;
 
@@ -61,23 +68,177 @@ public class SquadSearchSelectionFragment extends Fragment implements View.OnCli
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_squad_search_selection, container, false);
+
+        /** Everything displayed here needs to respect the squads privacy rules set **/
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ref = FirebaseDatabase.getInstance().getReference();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        viewPager = view.findViewById(R.id.viewpager);
+        progressBar = view.findViewById(R.id.progressBar);
+        squad_list = view.findViewById(R.id.squad_list);
+        squad_name = view.findViewById(R.id.squad_name);
+        back_btn = view.findViewById(R.id.back_btn);
+        request_join = view.findViewById(R.id.request_join);
 
-            Query query = ref.child(getString(R.string.firebase_node_users)).child(UID);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
+        back_btn.setOnClickListener(this);
+        request_join.setOnClickListener(this);
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        setupViewPager(view);
+
+        if (this.getArguments() != null) {
+            if ((squad = this.getArguments().getParcelable("squad")) != null)
+                initialize();
+        } else
+            Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+    }
+
+    public void setupViewPager(View view) {
+        pagerAdapter = new SectionsStatePagerAdapter(getChildFragmentManager());
+
+        pagerAdapter.addFragment(new AboutSquadSubFragment());
+        pagerAdapter.addFragment(new SquadMembersSubFragment());
+        pagerAdapter.addFragment(new SquadEventsSubFragment());
+
+        viewPager.setAdapter(pagerAdapter);
+
+        TabLayout tabLayout = view.findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.getTabAt(0).setText("About");
+        tabLayout.getTabAt(1).setText("Members");
+        tabLayout.getTabAt(2).setText("Events");
+
+        View root = tabLayout.getChildAt(0);
+        if (root instanceof LinearLayout) {
+            ((LinearLayout) root).setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setColor(ContextCompat.getColor(getActivity(), R.color.grey));
+            drawable.setSize(2, 0);
+            ((LinearLayout) root).setDividerPadding(10);
+            ((LinearLayout) root).setDividerDrawable(drawable);
+        }
+    }
+
+    private void initialize() {
+        squad_name.setText(squad.getSquadName());
+
+        ref = FirebaseDatabase.getInstance().getReference();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (currentUser != null) {
+                Query query = ref.child(getString(R.string.firebase_node_users)).child(currentUser.getUid());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            mUser = dataSnapshot.getValue(User.class);
+                            if (mUser != null) {
+                                request_join.setEnabled(true);
+
+                                /** Get data for AboutSquadSubFragment first, then onComplete, call getSquadMembers. Lastly, get data for SquadEventsSubFragment **/
+                                getSquadAbout();
+
+//                                getSquadMembers();
+                            }else {
+                                request_join.setEnabled(false);
+                                Toast.makeText(getActivity(), "There was a problem retrieving the users data.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            request_join.setEnabled(false);
+                            Toast.makeText(getActivity(), "There was a problem retrieving the users data.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            } else {
+                request_join.setEnabled(false);
+                Toast.makeText(getActivity(), "There was a problem retrieving your data.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void getSquadAbout() {
+        /**
+         I am not going to check for empty string here, so i need to make sure whenever a user removes a pin instead of replacing it, to
+         remove that node entirely from the database. that way it will either be NULL or !NULL.
+         **/
+        if (squad.getPinID() != null) {
+            Query pinQuery = ref.child("pins").child(squad.getPinID());
+
+            pinQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()){
-                        currentUser = dataSnapshot.getValue(User.class);
-                    }
+                    if (dataSnapshot.exists()) {
+                        Pin pin = dataSnapshot.getValue(Pin.class);
+
+                        if (pin != null) {
+                            Query postQuery = ref.child("socialPosts").child(squad.getSquadID()).child(pin.getPostID());
+
+                            postQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        Post post = dataSnapshot.getValue(Post.class);
+
+                                        if (post != null) {
+                                            pin.setPost(post);
+
+                                            Query userQuery = ref.child("users").child(post.getCreatorID());
+
+                                            userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    if (dataSnapshot.exists()) {
+                                                        User user = dataSnapshot.getValue(User.class);
+
+                                                        if (user != null) {
+                                                            initAboutFragment(squad, pin, user);
+
+                                                        } else {
+                                                            initAboutFragment(squad, pin, null);
+                                                            Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    } else {
+                                                        initAboutFragment(squad, pin, null);
+                                                        Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                        }
+                                    } else {
+                                        initAboutFragment(squad, pin, null);
+                                        Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            initAboutFragment(squad, null, null);
+                            Toast.makeText(getActivity(), "Could not retrieve pin", Toast.LENGTH_SHORT).show();
+                        }
+                    } else
+                        initAboutFragment(squad, null, null);
+
+                    getSquadMembers();
                 }
 
                 @Override
@@ -85,92 +246,48 @@ public class SquadSearchSelectionFragment extends Fragment implements View.OnCli
 
                 }
             });
+        } else {
+            initAboutFragment(squad, null, null);
+            getSquadMembers();
         }
 
-        squad_list = view.findViewById(R.id.squad_list);
-        creator_photo = view.findViewById(R.id.creator_photo);
-        squad_name = view.findViewById(R.id.squad_name);
-        creator_name = view.findViewById(R.id.creator_name);
-        creator_username = view.findViewById(R.id.creator_username);
-        num_members = view.findViewById(R.id.num_members);
-        back_btn = view.findViewById(R.id.back_btn);
-        request_join = view.findViewById(R.id.request_join);
-
-        back_btn.setOnClickListener(this);
-        request_join.setOnClickListener(this);
-
-        squad = getSquadFromBundle();
-        if (squad != null){
-            initialize();
-        }
-        else{
-            Log.d(TAG, "onViewCreated: squad is null");
-        }
     }
 
-    private void initialize() {
+    public void initAboutFragment(Squad squad, Pin pin, User user) {
+        Fragment childFragment;
+
+        if ((childFragment = pagerAdapter.getItem(0)) != null && childFragment instanceof AboutSquadSubFragment)
+            ((AboutSquadSubFragment) childFragment).initData(squad, pin, user);
+        else
+            Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+    }
+
+    public void getSquadMembers() {
+        Log.d(TAG, "getSquadMembers: called");
+
+        memberIds = new ArrayList<>();
         members = new ArrayList<>();
-        squad_users = new ArrayList<>();
-        stats = new ArrayList<>();
 
-        members.addAll(squad.getMemberList().keySet());
+        memberIds.addAll(squad.getMemberList().keySet());
 
-        squad_name.setText(squad.getSquadName());
-        num_members.setText(squad.getMemberList().size() + " Member(s)");
-//        creator_username.setText(squad.getCreatorUsername());
-//        creator_name.setText(squad.getCreatorName());
-//        if (squad.getCreatorPhotoId() != null){
-//            Glide.with(getActivity()).load(squad.getCreatorPhotoId()).into(creator_photo);
-//        }
-//        else{
-//            Glide.with(getActivity()).load(R.mipmap.default_profile_img).into(creator_photo);
-//
-//        }
+        Query query = ref.child(getString(R.string.firebase_node_users)).orderByKey();
 
-        Query query = ref.child(getString(R.string.firebase_node_users));
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                squad_users.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
-                    for (String key : members){
-                        if (ds.getKey().equals(key)){
-                            squad_users.add(ds.getValue(User.class));
-                        }
-                    }
+                members.clear();
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (memberIds.contains(ds.getKey()))
+                        members.add(ds.getValue(User.class));
                 }
 
-                if (!squad_users.isEmpty()){
-                    getUserStats();
-                }
-                else{
-                    Log.d(TAG, "squad member list is empty");
-                }
-            }
+                Fragment childFragment;
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    public void getUserStats(){
-        Query query = ref.child("userStats");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                stats.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
-                    for (String key : members){
-                        if (ds.getKey().equals(key)){
-                            stats.add(ds.getValue(UserStats.class));
-                        }
-                    }
-                }
-                Collections.sort(stats);
-                SquadMemberListAdapter adapter = new SquadMemberListAdapter(getActivity(), squad_users, stats);
-                squad_list.setAdapter(adapter);
+                if ((childFragment = pagerAdapter.getItem(1)) != null && childFragment instanceof SquadMembersSubFragment)
+                    ((SquadMembersSubFragment) childFragment).setMemberList(members);
+                 else
+                    Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -186,49 +303,31 @@ public class SquadSearchSelectionFragment extends Fragment implements View.OnCli
 
         Notification notification = new Notification(
                 notification_id,
-                currentUser.getUserID(),
-                currentUser.getName(),
-                currentUser.getPhotoUrl(),
+                mUser.getUserID(),
                 squad.getSquadID(),
-                squad.getSquadName(),
                 squad.getCreatorId(),
                 NOTIFICATION_TYPE,
                 date);
 
         ref.child(getString(R.string.notifications)).child(squad.getCreatorId()).child(notification_id).setValue(notification)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            request_join.setEnabled(true);
-                            Toast.makeText(getActivity(), "Request Sent!", Toast.LENGTH_SHORT).show();
-                            exit();
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        request_join.setEnabled(true);
+                        Toast.makeText(getActivity(), "Request Sent!", Toast.LENGTH_SHORT).show();
+                        exit();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                request_join.setEnabled(true);
-                Toast.makeText(getActivity(), "Failed to Send Request", Toast.LENGTH_SHORT).show();
-            }
-        });
+                }).addOnFailureListener(e -> {
+                    request_join.setEnabled(true);
+                    Toast.makeText(getActivity(), "Failed to Send Request", Toast.LENGTH_SHORT).show();
+                });
     }
 
-    public void exit(){
+    public void exit() {
         Intent intent = new Intent(getActivity(), SquadActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
-
-    public Squad getSquadFromBundle(){
-        Bundle bundle = this.getArguments();
-        if (bundle != null){
-            squad = bundle.getParcelable("squad");
-            return squad;
-        }
-        return null;
-    }
-
+    
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -236,7 +335,7 @@ public class SquadSearchSelectionFragment extends Fragment implements View.OnCli
                 Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStackImmediate();
                 break;
             case(R.id.request_join):
-                if (currentUser != null && squad != null){
+                if (mUser != null && squad != null){
                     request_join.setEnabled(false);
                     sendJoinRequest();
                 }

@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class Post implements Parcelable {
 
-    private String postID, creatorID, courseLocation, postBody, playTime;
+    private String postID, creatorID, postBody;
     private long dateCreated;
     private HashMap<String, Boolean> comments;
     private HashMap<String, Boolean> userLikesList;
@@ -16,20 +16,15 @@ public class Post implements Parcelable {
 
     public Post(String postID,
                 String creatorID,
-                String courseLocation,
                 long dateCreated,
                 String postBody,
-                String playTime,
-               HashMap<String, Boolean> comments,
-                HashMap<String,
-                        Boolean> userLikesList) {
+                HashMap<String, Boolean> comments,
+                HashMap<String, Boolean> userLikesList) {
 
         this.postID = postID;
         this.creatorID = creatorID;
-        this.courseLocation = courseLocation;
         this.dateCreated = dateCreated;
         this.postBody = postBody;
-        this.playTime = playTime;
         this.comments = comments;
         this.userLikesList = userLikesList;
     }
@@ -37,9 +32,7 @@ public class Post implements Parcelable {
     protected Post(Parcel in) {
         postID = in.readString();
         creatorID = in.readString();
-        courseLocation = in.readString();
         postBody = in.readString();
-        playTime = in.readString();
         dateCreated = in.readLong();
     }
 
@@ -47,9 +40,7 @@ public class Post implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(postID);
         dest.writeString(creatorID);
-        dest.writeString(courseLocation);
         dest.writeString(postBody);
-        dest.writeString(playTime);
         dest.writeLong(dateCreated);
     }
 
@@ -86,14 +77,6 @@ public class Post implements Parcelable {
         this.creatorID = creatorID;
     }
 
-    public String getCourseLocation() {
-        return courseLocation;
-    }
-
-    public void setCourseLocation(String postLocation) {
-        this.courseLocation = postLocation;
-    }
-
     public long getDateCreated() {
         return dateCreated;
     }
@@ -108,20 +91,6 @@ public class Post implements Parcelable {
 
     public void setPostBody(String postBody) {
         this.postBody = postBody;
-    }
-
-    public String getPlayTime() {
-        return playTime;
-    }
-
-    public void setPlayTime(String postTime) {
-        this.playTime = postTime;
-    }
-
-    public int getLikes() {
-        if (getUserLikesList() != null)
-            return userLikesList.size();
-        else return 0;
     }
 
     public HashMap<String, Boolean> getComments() {

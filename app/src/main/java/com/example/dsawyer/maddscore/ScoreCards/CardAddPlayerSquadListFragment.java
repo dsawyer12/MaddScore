@@ -42,7 +42,6 @@ public class CardAddPlayerSquadListFragment extends Fragment {
     private Scorecard mCard;
 
     private ArrayList<User> squadMemberList;
-    private ArrayList<UserStats> userStats;
     private ArrayList<User> cardUsers;
 
     SquadMemberListAdapter adapter;
@@ -78,20 +77,17 @@ public class CardAddPlayerSquadListFragment extends Fragment {
 
         cardUsers = new ArrayList<>();
 
-        squadList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SparseBooleanArray sparseBooleanArray = squadList.getCheckedItemPositions();
-                if (sparseBooleanArray.get(position)) {
-                    cardUsers.add(squadMemberList.get(position));
-                    view.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryTransparent));
-                }
-                else {
-                    cardUsers.remove(squadMemberList.get(position));
-                    view.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.PrimaryBackground));
-                }
-                listener.onSortSquad(cardUsers);
+        squadList.setOnItemClickListener((parent, view1, position, id) -> {
+            SparseBooleanArray sparseBooleanArray = squadList.getCheckedItemPositions();
+            if (sparseBooleanArray.get(position)) {
+                cardUsers.add(squadMemberList.get(position));
+                view1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryTransparent));
             }
+            else {
+                cardUsers.remove(squadMemberList.get(position));
+                view1.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.PrimaryBackground));
+            }
+            listener.onSortSquad(cardUsers);
         });
     }
 
@@ -166,7 +162,7 @@ public class CardAddPlayerSquadListFragment extends Fragment {
                         }
                     }
 
-                   getUserStats();
+                    adapter = new SquadMemberListAdapter(getActivity(), squadMemberList);
                 }
 
                 @Override
@@ -177,33 +173,6 @@ public class CardAddPlayerSquadListFragment extends Fragment {
         }
         else
             no_players.setVisibility(View.VISIBLE);
-    }
-
-    public void getUserStats() {
-        userStats = new ArrayList<>();
-        Query query = ref.child("userStats");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                UserStats stats;
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    stats = ds.getValue(UserStats.class);
-                    for (int i = 0; i < squadMemberList.size(); i++) {
-                        if (stats != null && stats.getUserID().equals(squadMemberList.get(i).getUserID())) {
-                            Log.d(TAG, "squad user stats found : " + stats.getUserID());
-                            userStats.add(stats);
-                        }
-                    }
-                }
-
-                adapter = new SquadMemberListAdapter(getActivity(), squadMemberList, userStats);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     public Scorecard getCardFromBundle() {

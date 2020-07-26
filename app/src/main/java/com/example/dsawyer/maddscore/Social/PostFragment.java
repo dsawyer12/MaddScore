@@ -1,12 +1,10 @@
 package com.example.dsawyer.maddscore.Social;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -25,19 +23,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.dsawyer.maddscore.Objects.PostUserMap;
-import com.example.dsawyer.maddscore.Objects.tempCourse;
+import com.example.dsawyer.maddscore.ObjectMaps.PostUserMap;
 import com.example.dsawyer.maddscore.Objects.Post;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Squad.SocialFragment;
-import com.example.dsawyer.maddscore.Squad.SquadActivity;
 import com.example.dsawyer.maddscore.Utils.LoadingDialog;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -55,8 +50,6 @@ public class PostFragment extends DialogFragment implements View.OnClickListener
     private LoadingDialog loadingDialog;
 
     private User mUser;
-    private tempCourse mTempCourse;
-    private String strDate;
     private HashMap<String, Boolean> userList;
     private boolean isEditing;
     private PostUserMap oldPost;
@@ -86,7 +79,6 @@ public class PostFragment extends DialogFragment implements View.OnClickListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mTempCourse = new tempCourse();
         userList = new HashMap<>();
 
         loadingDialog = new LoadingDialog(getActivity());
@@ -247,6 +239,7 @@ public class PostFragment extends DialogFragment implements View.OnClickListener
 
     public void postNew() {
         loadingDialog.show();
+
         if (mUser != null) {
             final String postKey = ref.child("socialPosts").child(mUser.getSquad()).push().getKey();
             long date = System.currentTimeMillis();
@@ -255,10 +248,8 @@ public class PostFragment extends DialogFragment implements View.OnClickListener
             if (postKey != null) {
                 final Post post = new Post(postKey,
                         mUser.getUserID(),
-                        mTempCourse.getName(),
                         date,
                         postBody,
-                        strDate,
                         new HashMap<>(),
                         userList);
 

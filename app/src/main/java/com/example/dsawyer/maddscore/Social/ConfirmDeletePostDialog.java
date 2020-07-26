@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.dsawyer.maddscore.Objects.PostUserMap;
+import com.example.dsawyer.maddscore.ObjectMaps.PostUserMap;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 import com.google.firebase.database.DatabaseReference;

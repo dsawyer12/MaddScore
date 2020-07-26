@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.dsawyer.maddscore.ObjectMaps.NotificationUserMap;
 import com.example.dsawyer.maddscore.Objects.Notification;
 import com.example.dsawyer.maddscore.R;
 
@@ -22,7 +23,7 @@ public class NotificationRecyclerView extends RecyclerView.Adapter<NotificationR
     private static final String TAG = "TAG";
 
     private Context context;
-    private ArrayList<Notification> myNotifications;
+    private ArrayList<NotificationUserMap> myNotifications;
 
     public interface OnRequestClickListener {
         void onRequestClicked(Notification n);
@@ -31,7 +32,7 @@ public class NotificationRecyclerView extends RecyclerView.Adapter<NotificationR
     }
     private OnRequestClickListener listener;
 
-    public NotificationRecyclerView(Context context, OnRequestClickListener listener, ArrayList<Notification> myNotifications) {
+    public NotificationRecyclerView(Context context, OnRequestClickListener listener, ArrayList<NotificationUserMap> myNotifications) {
         this.context = context;
         this.myNotifications = myNotifications;
         this.listener = listener;
@@ -47,69 +48,56 @@ public class NotificationRecyclerView extends RecyclerView.Adapter<NotificationR
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
-        if (myNotifications.get(holder.getAdapterPosition()).getNotificationType() == Notification.FRIEND_REQUEST) {
-            holder.accept.setVisibility(View.VISIBLE);
-            holder.decline.setVisibility(View.VISIBLE);
-            holder.senderName.setText(myNotifications.get(holder.getAdapterPosition()).getSenderName());
-            if (myNotifications.get(position).getSenderPhotoID() != null)
-                Glide.with(context).load(myNotifications.get(position).getSenderPhotoID()).into(holder.userImage);
+        /** If the notification type is a friend request **/
+        if (myNotifications.get(holder.getAdapterPosition()).getNotification().getNotificationType() == Notification.FRIEND_REQUEST) {
+            holder.senderName.setText(myNotifications.get(holder.getAdapterPosition()).getName());
+            if (myNotifications.get(position).getPhotoUrl() != null)
+                Glide.with(context).load(myNotifications.get(position).getPhotoUrl()).into(holder.userImage);
             else
                 Glide.with(context).load(R.mipmap.default_profile_img).into(holder.userImage);
             holder.text.setText("sent you a friend request!");
         }
-        else if (myNotifications.get(holder.getAdapterPosition()).getNotificationType() == Notification.SQUAD_INVITE) {
-            holder.accept.setVisibility(View.VISIBLE);
-            holder.decline.setVisibility(View.VISIBLE);
-            holder.senderName.setText(myNotifications.get(holder.getAdapterPosition()).getSenderName());
-            if (myNotifications.get(position).getSenderPhotoID() != null)
-                Glide.with(context).load(myNotifications.get(position).getSenderPhotoID()).into(holder.userImage);
+        /** If the notification type is a squad invite **/
+        else if (myNotifications.get(holder.getAdapterPosition()).getNotification().getNotificationType() == Notification.SQUAD_INVITE) {
+            holder.senderName.setText(myNotifications.get(holder.getAdapterPosition()).getName());
+            if (myNotifications.get(position).getPhotoUrl() != null)
+                Glide.with(context).load(myNotifications.get(position).getPhotoUrl()).into(holder.userImage);
             else
                 Glide.with(context).load(R.mipmap.default_profile_img).into(holder.userImage);
             holder.text.setText("invited you to join their Squad!");
             holder.snippet.setText(myNotifications.get(holder.getAdapterPosition()).getSquadName());
         }
-        else if (myNotifications.get(holder.getAdapterPosition()).getNotificationType() == Notification.SQUAD_REQUEST) {
+        /** If the notification type is a squad request **/
+        else if (myNotifications.get(holder.getAdapterPosition()).getNotification().getNotificationType() == Notification.SQUAD_REQUEST) {
             holder.accept.setVisibility(View.VISIBLE);
             holder.decline.setVisibility(View.VISIBLE);
-            holder.senderName.setText(myNotifications.get(position).getSenderName());
-            if (myNotifications.get(position).getSenderPhotoID() != null)
-                Glide.with(context).load(myNotifications.get(position).getSenderPhotoID()).into(holder.userImage);
+            holder.senderName.setText(myNotifications.get(position).getName());
+            if (myNotifications.get(position).getPhotoUrl() != null)
+                Glide.with(context).load(myNotifications.get(position).getPhotoUrl()).into(holder.userImage);
             else
                 Glide.with(context).load(R.mipmap.default_profile_img).into(holder.userImage);
             holder.text.setText("wants to join your Squad!");
         }
-        else if (myNotifications.get(holder.getAdapterPosition()).getNotificationType() == Notification.MESSAGE) {
+        /** If the notification type is a message **/
+        else if (myNotifications.get(holder.getAdapterPosition()).getNotification().getNotificationType() == Notification.MESSAGE) {
             holder.accept.setVisibility(View.GONE);
             holder.decline.setVisibility(View.GONE);
-            holder.senderName.setText(myNotifications.get(holder.getAdapterPosition()).getSenderName());
-            if (myNotifications.get(holder.getAdapterPosition()).getSenderPhotoID() != null)
-                Glide.with(context).load(myNotifications.get(position).getSenderPhotoID()).into(holder.userImage);
+            holder.senderName.setText(myNotifications.get(holder.getAdapterPosition()).getName());
+            if (myNotifications.get(holder.getAdapterPosition()).getPhotoUrl() != null)
+                Glide.with(context).load(myNotifications.get(position).getPhotoUrl()).into(holder.userImage);
             else
                 Glide.with(context).load(R.mipmap.default_profile_img).into(holder.userImage);
             holder.text.setText("sent you a message.");
-            holder.snippet.setText(myNotifications.get(holder.getAdapterPosition()).getSnippet());
+            holder.snippet.setText(myNotifications.get(holder.getAdapterPosition()).getNotification().getSnippet());
         }
 
-        holder.accept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onRequestAccept(myNotifications.get(holder.getAdapterPosition()));
-            }
-        });
+        holder.accept.setOnClickListener(v -> listener.onRequestAccept(myNotifications.get(holder.getAdapterPosition()).getNotification()));
 
-        holder.decline.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onRequestDeclined(myNotifications.get(holder.getAdapterPosition()));
-            }
-        });
+        holder.decline.setOnClickListener(v -> listener.onRequestDeclined(myNotifications.get(holder.getAdapterPosition()).getNotification()));
 
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myNotifications.get(holder.getAdapterPosition()).getNotificationType() == Notification.MESSAGE) {
-                    listener.onRequestClicked(myNotifications.get(holder.getAdapterPosition()));
-                }
+        holder.rootView.setOnClickListener(v -> {
+            if (myNotifications.get(holder.getAdapterPosition()).getNotification().getNotificationType() == Notification.MESSAGE) {
+                listener.onRequestClicked(myNotifications.get(holder.getAdapterPosition()).getNotification());
             }
         });
     }
@@ -119,7 +107,7 @@ public class NotificationRecyclerView extends RecyclerView.Adapter<NotificationR
         return myNotifications.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         CardView rootView;
         TextView senderName, text, snippet;
         CircleImageView userImage;

@@ -77,7 +77,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/notificationRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/PrimaryBackground2">
 
             </android.support.v7.widget.RecyclerView>
 

@@ -1,7 +1,6 @@
 package com.example.dsawyer.maddscore.Utils;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -10,13 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.Post;
-import com.example.dsawyer.maddscore.Objects.PostUserMap;
+import com.example.dsawyer.maddscore.ObjectMaps.PostUserMap;
 import com.example.dsawyer.maddscore.R;
 
 import java.text.SimpleDateFormat;

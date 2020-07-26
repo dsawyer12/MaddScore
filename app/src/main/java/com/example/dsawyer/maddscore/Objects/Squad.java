@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class Squad implements Parcelable {
 
-    private String creatorId, squadName, squadID, publicID, description;
+    private String creatorId, squadName, squadID, publicID, description, pinID;
     private long dateCreated;
     private int privacyLevel;
 
@@ -43,6 +43,7 @@ public class Squad implements Parcelable {
         squadID = in.readString();
         publicID = in.readString();
         description = in.readString();
+        pinID = in.readString();
         dateCreated = in.readLong();
         privacyLevel = in.readInt();
     }
@@ -54,6 +55,7 @@ public class Squad implements Parcelable {
         dest.writeString(squadID);
         dest.writeString(publicID);
         dest.writeString(description);
+        dest.writeString(pinID);
         dest.writeLong(dateCreated);
         dest.writeInt(privacyLevel);
     }
@@ -76,6 +78,14 @@ public class Squad implements Parcelable {
     };
 
     /**********     sntadard getters and setters        **********/
+
+    public String getPinID() {
+        return pinID;
+    }
+
+    public void setPinID(String pinID) {
+        this.pinID = pinID;
+    }
 
     public String getCreatorId() {
         return creatorId;

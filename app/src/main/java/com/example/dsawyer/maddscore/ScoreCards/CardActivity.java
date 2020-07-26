@@ -269,224 +269,224 @@ public class CardActivity extends AppCompatActivity implements
                 .child(mCard.getCardID())
                 .setValue(true);
 
-        calculateUserStats();
+//        calculateUserStats();
     }
 
-    public void calculateUserStats() {
-        Log.d(TAG, "calculateUserStats: called");
-        if (userStats != null) {
-
-            List<User> nonRegisteredUsers = mCard.getUsers()
-                    .stream().filter(user -> !user.isRegistered()).collect(Collectors.toList());
-
-            for (int m = 0; m < userStats.size(); m++) {
-                for (int i = 0; i < mCard.getPlayers().size(); i++) {
-                    if (mCard.getPlayers().get(i).getUserId().equals(userStats.get(m).getUserID())) {
-                            Log.d(TAG, "STATS FOR : " + mCard.getPlayers().get(i).getUserId());
-
-                            int holesThrown = 0;
-                        for (int j : mCard.getPlayers().get(i).getHoleScores()) {
-                            if (j > 0)
-                                holesThrown++;
-                        }
-                        if (holesThrown > 0) {
-                            if(userStats.get(m).getNumRounds() == 0) {
-                                Log.d(TAG, "user does NOT have previous rounds");
-                                userStats.get(m).setBestRoundCourse(mCard.getCourse().getCourseId());
-                                userStats.get(m).setBestRoundDate(mCard.getDateCreated());
-                                userStats.get(m).setBestRoundScore(mCard.getPlayers().get(i).getTotal());
-
-                                userStats.get(m).setScoreAVG(mCard.getPlayers().get(i).getTotal());
-                                userStats.get(m).setNumRounds(1);
-                                Log.d(TAG, "new Score AVG : " + (userStats.get(m).getScoreAVG()));
-                                Log.d(TAG, "new Number of Rounds played : " + (userStats.get(m).getNumRounds()));
-                            }
-                            else {
-                                Log.d(TAG, "user has previous rounds");
-                                if (mCard.getPlayers().get(i).getTotal() < userStats.get(m).getBestRoundScore()) {
-                                    Log.d(TAG, "this round was better than the last");
-                                    userStats.get(m).setBestRoundCourse(mCard.getCourse().getCourseId());
-                                    userStats.get(m).setBestRoundDate(mCard.getDateCreated());
-                                    userStats.get(m).setBestRoundScore(mCard.getPlayers().get(i).getTotal());
-                                }
-
-                                /*****  New score AVG   *****/
-                                double tempScoreAVG;
-                                if (userStats.get(m).getScoreAVG() == 0) {
-                                    tempScoreAVG = 0.1 * userStats.get(m).getNumRounds();
-                                }
-                                else {
-                                    tempScoreAVG = userStats.get(m).getScoreAVG() * userStats.get(m).getNumRounds();
-                                }
-                                userStats.get(m).setNumRounds(userStats.get(m).getNumRounds() + 1);
-                                userStats.get(m).setScoreAVG( (int) Math.round( (tempScoreAVG + mCard.getPlayers().get(i).getTotal()) / (userStats.get(m).getNumRounds()) ) );
-                                Log.d(TAG, "new Score AVG : " + (userStats.get(m).getScoreAVG()));
-                                Log.d(TAG, "new Number of Rounds played : " + (userStats.get(m).getNumRounds()));
-                            }
-
-                                userStats.get(m).setHolesThrown(userStats.get(m).getHolesThrown() + holesThrown);
-                                Log.d(TAG, "Number of holes thrown : " + (holesThrown));
-
-                                /***** New Hole In Ones *****/
-                                int numHoleIOnOnes = 0;
-                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
-                                    if (mCard.getPlayers().get(i).getHoleScore(j) == 1) {
-                                        numHoleIOnOnes++;
-                                    }
-                                }
-                                Log.d(TAG, "# of hole in ones : " + numHoleIOnOnes);
-                                userStats.get(m).setHoleInOnes(userStats.get(m).getHoleInOnes() + numHoleIOnOnes);
-                                Log.d(TAG, "new total hole in ones : " + (userStats.get(m).getHoleInOnes()));
-
-                                /***** New Eagles *****/
-                                int numEagles = 0;
-                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
-                                    if (mCard.getPlayers().get(i).getHoleScore(j) == mCard.getPar(j) - 2) {
-                                        numEagles++;
-                                    }
-                                }
-                                Log.d(TAG, "# of eagles : " + numEagles);
-                                userStats.get(m).setEagles(userStats.get(m).getEagles() + numEagles);
-                                Log.d(TAG, "new total eagles : " + (userStats.get(m).getEagles()));
-
-                                /***** New EagleAces *****/
-                                int numEagleAces = 0;
-                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
-                                    if (mCard.getPlayers().get(i).getHoleScore(j) == 1 &&
-                                            mCard.getPlayers().get(i).getHoleScore(j) == mCard.getPar(j) - 2) {
-                                        numEagleAces++;
-                                    }
-                                }
-                                Log.d(TAG, "# of eagleAces : " + numEagleAces);
-                                userStats.get(m).setEagleAces(userStats.get(m).getEagleAces() + numEagleAces);
-                                Log.d(TAG, "new total eagleAces : " + (userStats.get(m).getEagleAces()));
-
-                                /***** New Pars *****/
-                                int numPars = 0;
-                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
-                                    if (mCard.getPlayers().get(i).getHoleScore(j) == mCard.getPar(j)) {
-                                        numPars++;
-                                    }
-                                }
-                                Log.d(TAG, "# of pars : " + numPars);
-                                userStats.get(m).setPars(userStats.get(m).getPars() + numPars);
-                                Log.d(TAG, "new total pars : " + (userStats.get(m).getPars()));
-
-                                /*****  New Birdies  *****/
-                                int numBirdies = 0;
-                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
-                                    if (mCard.getPlayers().get(i).getHoleScore(j) == (mCard.getPar(j) - 1)) {
-                                        numBirdies++;
-                                    }
-                                }
-
-                                Log.d(TAG, "# of birdies : " + numBirdies);
-                                userStats.get(m).setBirdies(userStats.get(m).getBirdies() + numBirdies);
-                                Log.d(TAG, "new total birdies : " + (userStats.get(m).getBirdies()));
-
-                                /***** New Bogies *****/
-                                int numBogies = 0;
-                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
-                                    if (mCard.getPlayers().get(i).getHoleScore(j) == (mCard.getPar(j)) + 1) {
-                                        numBogies++;
-                                    }
-                                }
-                                Log.d(TAG, "# of bogies : " + numBogies);
-                                userStats.get(m).setBogies(userStats.get(m).getBogies() + numBogies);
-                                Log.d(TAG, "new total bogies : " + (userStats.get(m).getBogies()));
-
-                                /***** New Double Bogie or more *****/
-                                int numDoubleBogiesPlus = 0;
-                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
-                                    if (mCard.getPlayers().get(i).getHoleScore(j) >= (mCard.getPar(j)) + 2) {
-                                        numDoubleBogiesPlus++;
-                                    }
-                                }
-                                Log.d(TAG, "# of Doubles or more : " + numDoubleBogiesPlus);
-                                userStats.get(m).setDoublePlus(userStats.get(m).getDoublePlus() + numDoubleBogiesPlus);
-                                Log.d(TAG, "new total double plues : " + (userStats.get(m).getDoublePlus()));
-
-                                for (int j = 0; j < nonRegisteredUsers.size(); j++) {
-                                    if (mCard.getPlayers().get(i).getUserId().equals(nonRegisteredUsers.get(j).getUserID())) {
-                                        Log.d(TAG, "storing stats for non registered user : " + nonRegisteredUsers.get(j).getName());
-                                        ref.child("userStats").child(mCard.getPlayers().get(i).getUserId()).setValue(userStats.get(m));
-                                    }
-                                }
-                        }
-                    }
-                }
-            }
-
-            List<User> users = mCard.getUsers()
-                    .stream().filter(user -> user.getSquad() != null)
-                    .collect(Collectors.toList());
-
-            HashMap<User, Player> userMatch = new HashMap<>();
-
-            for (int i = 0; i < users.size(); i++) {
-                for (int j = 0; j < mCard.getPlayers().size(); j++) {
-                    if (mCard.getPlayers().get(j).getUserId().equals(users.get(i).getUserID()))
-                        userMatch.put(users.get(i), mCard.getPlayers().get(j));
-                }
-            }
-
-            NavigableMap<String, HashMap<User, Player>> sortedSquads = new TreeMap<>();
-            for (Map.Entry<User, Player> objs : userMatch.entrySet()) {
-                HashMap<User, Player> userList = sortedSquads.get(objs.getKey().getSquad());
-                if (userList == null)
-                    sortedSquads.put(objs.getKey().getSquad(), userList = new HashMap<>());
-                userList.put(objs.getKey(), objs.getValue());
-            }
-
-            Log.d(TAG, "sorted squad list : " + sortedSquads.toString());
-
-            ArrayList<Player> players;
-            HashMap<String, UserStats> playerStats;
-            for (Map.Entry<String, HashMap<User, Player>> map : sortedSquads.entrySet()) {
-                players = new ArrayList<>();
-                for (Map.Entry<User, Player> subMap : map.getValue().entrySet()) {
-                    players.add(subMap.getValue());
-                }
-                Collections.sort(players);
-
-                playerStats = new HashMap<>();
-                for (int i = 0; i < players.size(); i++) {
-                    for (int k = 0; k < userStats.size(); k++) {
-                        if (userStats.get(k).getUserID().equals(players.get(i).getUserId()))
-                            playerStats.put(players.get(i).getUserId(), userStats.get(k));
-                    }
-                }
-
-                Log.d(TAG, "player stats list : " + playerStats.toString());
-
-
-                int n = 0, next = 1;
-                while(n < players.size() - 1) {
-                    while(next < players.size()) {
-                        if (players.get(n).getTotal() < players.get(next).getTotal()
-                                && playerStats.get(players.get(n).getUserId()).getSquadRank()
-                                > playerStats.get(players.get(next).getUserId()).getSquadRank()) {
-                            int tempRank = playerStats.get(players.get(next).getUserId()).getSquadRank();
-                            playerStats.get(players.get(next).getUserId()).setSquadRank(playerStats.get(players.get(n).getUserId()).getSquadRank());
-                            playerStats.get(players.get(n).getUserId()).setSquadRank(tempRank);
-                        }
-                        next++;
-                    }
-                    n++;
-                    next = (n + 1);
-                }
-
-                for (Map.Entry<String, UserStats> entry : playerStats.entrySet()) {
-                    Log.d(TAG, "Rank for : " + entry.getKey() + " : " + entry.getValue().getSquadRank());
-                    ref.child("userStats").child(entry.getKey()).setValue(entry.getValue());
-                }
-            }
-        }
-        else
-            Log.d(TAG, "stats list is null");
-
-        exit();
-    }
+//    public void calculateUserStats() {
+//        Log.d(TAG, "calculateUserStats: called");
+//        if (userStats != null) {
+//
+//            List<User> nonRegisteredUsers = mCard.getUsers()
+//                    .stream().filter(user -> !user.isRegistered()).collect(Collectors.toList());
+//
+//            for (int m = 0; m < userStats.size(); m++) {
+//                for (int i = 0; i < mCard.getPlayers().size(); i++) {
+//                    if (mCard.getPlayers().get(i).getUserId().equals(userStats.get(m).getUserID())) {
+//                            Log.d(TAG, "STATS FOR : " + mCard.getPlayers().get(i).getUserId());
+//
+//                            int holesThrown = 0;
+//                        for (int j : mCard.getPlayers().get(i).getHoleScores()) {
+//                            if (j > 0)
+//                                holesThrown++;
+//                        }
+//                        if (holesThrown > 0) {
+//                            if(userStats.get(m).getNumRounds() == 0) {
+//                                Log.d(TAG, "user does NOT have previous rounds");
+//                                userStats.get(m).setBestRoundCourse(mCard.getCourse().getCourseId());
+//                                userStats.get(m).setBestRoundDate(mCard.getDateCreated());
+//                                userStats.get(m).setBestRoundScore(mCard.getPlayers().get(i).getTotal());
+//
+//                                userStats.get(m).setScoreAVG(mCard.getPlayers().get(i).getTotal());
+//                                userStats.get(m).setNumRounds(1);
+//                                Log.d(TAG, "new Score AVG : " + (userStats.get(m).getScoreAVG()));
+//                                Log.d(TAG, "new Number of Rounds played : " + (userStats.get(m).getNumRounds()));
+//                            }
+//                            else {
+//                                Log.d(TAG, "user has previous rounds");
+//                                if (mCard.getPlayers().get(i).getTotal() < userStats.get(m).getBestRoundScore()) {
+//                                    Log.d(TAG, "this round was better than the last");
+//                                    userStats.get(m).setBestRoundCourse(mCard.getCourse().getCourseId());
+//                                    userStats.get(m).setBestRoundDate(mCard.getDateCreated());
+//                                    userStats.get(m).setBestRoundScore(mCard.getPlayers().get(i).getTotal());
+//                                }
+//
+//                                /*****  New score AVG   *****/
+//                                double tempScoreAVG;
+//                                if (userStats.get(m).getScoreAVG() == 0) {
+//                                    tempScoreAVG = 0.1 * userStats.get(m).getNumRounds();
+//                                }
+//                                else {
+//                                    tempScoreAVG = userStats.get(m).getScoreAVG() * userStats.get(m).getNumRounds();
+//                                }
+//                                userStats.get(m).setNumRounds(userStats.get(m).getNumRounds() + 1);
+//                                userStats.get(m).setScoreAVG( (int) Math.round( (tempScoreAVG + mCard.getPlayers().get(i).getTotal()) / (userStats.get(m).getNumRounds()) ) );
+//                                Log.d(TAG, "new Score AVG : " + (userStats.get(m).getScoreAVG()));
+//                                Log.d(TAG, "new Number of Rounds played : " + (userStats.get(m).getNumRounds()));
+//                            }
+//
+//                                userStats.get(m).setHolesThrown(userStats.get(m).getHolesThrown() + holesThrown);
+//                                Log.d(TAG, "Number of holes thrown : " + (holesThrown));
+//
+//                                /***** New Hole In Ones *****/
+//                                int numHoleIOnOnes = 0;
+//                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
+//                                    if (mCard.getPlayers().get(i).getHoleScore(j) == 1) {
+//                                        numHoleIOnOnes++;
+//                                    }
+//                                }
+//                                Log.d(TAG, "# of hole in ones : " + numHoleIOnOnes);
+//                                userStats.get(m).setHoleInOnes(userStats.get(m).getHoleInOnes() + numHoleIOnOnes);
+//                                Log.d(TAG, "new total hole in ones : " + (userStats.get(m).getHoleInOnes()));
+//
+//                                /***** New Eagles *****/
+//                                int numEagles = 0;
+//                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
+//                                    if (mCard.getPlayers().get(i).getHoleScore(j) == mCard.getPar(j) - 2) {
+//                                        numEagles++;
+//                                    }
+//                                }
+//                                Log.d(TAG, "# of eagles : " + numEagles);
+//                                userStats.get(m).setEagles(userStats.get(m).getEagles() + numEagles);
+//                                Log.d(TAG, "new total eagles : " + (userStats.get(m).getEagles()));
+//
+//                                /***** New EagleAces *****/
+//                                int numEagleAces = 0;
+//                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
+//                                    if (mCard.getPlayers().get(i).getHoleScore(j) == 1 &&
+//                                            mCard.getPlayers().get(i).getHoleScore(j) == mCard.getPar(j) - 2) {
+//                                        numEagleAces++;
+//                                    }
+//                                }
+//                                Log.d(TAG, "# of eagleAces : " + numEagleAces);
+//                                userStats.get(m).setEagleAces(userStats.get(m).getEagleAces() + numEagleAces);
+//                                Log.d(TAG, "new total eagleAces : " + (userStats.get(m).getEagleAces()));
+//
+//                                /***** New Pars *****/
+//                                int numPars = 0;
+//                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
+//                                    if (mCard.getPlayers().get(i).getHoleScore(j) == mCard.getPar(j)) {
+//                                        numPars++;
+//                                    }
+//                                }
+//                                Log.d(TAG, "# of pars : " + numPars);
+//                                userStats.get(m).setPars(userStats.get(m).getPars() + numPars);
+//                                Log.d(TAG, "new total pars : " + (userStats.get(m).getPars()));
+//
+//                                /*****  New Birdies  *****/
+//                                int numBirdies = 0;
+//                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
+//                                    if (mCard.getPlayers().get(i).getHoleScore(j) == (mCard.getPar(j) - 1)) {
+//                                        numBirdies++;
+//                                    }
+//                                }
+//
+//                                Log.d(TAG, "# of birdies : " + numBirdies);
+//                                userStats.get(m).setBirdies(userStats.get(m).getBirdies() + numBirdies);
+//                                Log.d(TAG, "new total birdies : " + (userStats.get(m).getBirdies()));
+//
+//                                /***** New Bogies *****/
+//                                int numBogies = 0;
+//                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
+//                                    if (mCard.getPlayers().get(i).getHoleScore(j) == (mCard.getPar(j)) + 1) {
+//                                        numBogies++;
+//                                    }
+//                                }
+//                                Log.d(TAG, "# of bogies : " + numBogies);
+//                                userStats.get(m).setBogies(userStats.get(m).getBogies() + numBogies);
+//                                Log.d(TAG, "new total bogies : " + (userStats.get(m).getBogies()));
+//
+//                                /***** New Double Bogie or more *****/
+//                                int numDoubleBogiesPlus = 0;
+//                                for (int j = 0; j < mCard.getCourse().getNumHoles(); j++) {
+//                                    if (mCard.getPlayers().get(i).getHoleScore(j) >= (mCard.getPar(j)) + 2) {
+//                                        numDoubleBogiesPlus++;
+//                                    }
+//                                }
+//                                Log.d(TAG, "# of Doubles or more : " + numDoubleBogiesPlus);
+//                                userStats.get(m).setDoublePlus(userStats.get(m).getDoublePlus() + numDoubleBogiesPlus);
+//                                Log.d(TAG, "new total double plues : " + (userStats.get(m).getDoublePlus()));
+//
+//                                for (int j = 0; j < nonRegisteredUsers.size(); j++) {
+//                                    if (mCard.getPlayers().get(i).getUserId().equals(nonRegisteredUsers.get(j).getUserID())) {
+//                                        Log.d(TAG, "storing stats for non registered user : " + nonRegisteredUsers.get(j).getName());
+//                                        ref.child("userStats").child(mCard.getPlayers().get(i).getUserId()).setValue(userStats.get(m));
+//                                    }
+//                                }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            List<User> users = mCard.getUsers()
+//                    .stream().filter(user -> user.getSquad() != null)
+//                    .collect(Collectors.toList());
+//
+//            HashMap<User, Player> userMatch = new HashMap<>();
+//
+//            for (int i = 0; i < users.size(); i++) {
+//                for (int j = 0; j < mCard.getPlayers().size(); j++) {
+//                    if (mCard.getPlayers().get(j).getUserId().equals(users.get(i).getUserID()))
+//                        userMatch.put(users.get(i), mCard.getPlayers().get(j));
+//                }
+//            }
+//
+//            NavigableMap<String, HashMap<User, Player>> sortedSquads = new TreeMap<>();
+//            for (Map.Entry<User, Player> objs : userMatch.entrySet()) {
+//                HashMap<User, Player> userList = sortedSquads.get(objs.getKey().getSquad());
+//                if (userList == null)
+//                    sortedSquads.put(objs.getKey().getSquad(), userList = new HashMap<>());
+//                userList.put(objs.getKey(), objs.getValue());
+//            }
+//
+//            Log.d(TAG, "sorted squad list : " + sortedSquads.toString());
+//
+//            ArrayList<Player> players;
+//            HashMap<String, UserStats> playerStats;
+//            for (Map.Entry<String, HashMap<User, Player>> map : sortedSquads.entrySet()) {
+//                players = new ArrayList<>();
+//                for (Map.Entry<User, Player> subMap : map.getValue().entrySet()) {
+//                    players.add(subMap.getValue());
+//                }
+//                Collections.sort(players);
+//
+//                playerStats = new HashMap<>();
+//                for (int i = 0; i < players.size(); i++) {
+//                    for (int k = 0; k < userStats.size(); k++) {
+//                        if (userStats.get(k).getUserID().equals(players.get(i).getUserId()))
+//                            playerStats.put(players.get(i).getUserId(), userStats.get(k));
+//                    }
+//                }
+//
+//                Log.d(TAG, "player stats list : " + playerStats.toString());
+//
+//
+//                int n = 0, next = 1;
+//                while(n < players.size() - 1) {
+//                    while(next < players.size()) {
+//                        if (players.get(n).getTotal() < players.get(next).getTotal()
+//                                && playerStats.get(players.get(n).getUserId()).getSquadRank()
+//                                > playerStats.get(players.get(next).getUserId()).getSquadRank()) {
+//                            int tempRank = playerStats.get(players.get(next).getUserId()).getSquadRank();
+//                            playerStats.get(players.get(next).getUserId()).setSquadRank(playerStats.get(players.get(n).getUserId()).getSquadRank());
+//                            playerStats.get(players.get(n).getUserId()).setSquadRank(tempRank);
+//                        }
+//                        next++;
+//                    }
+//                    n++;
+//                    next = (n + 1);
+//                }
+//
+//                for (Map.Entry<String, UserStats> entry : playerStats.entrySet()) {
+//                    Log.d(TAG, "Rank for : " + entry.getKey() + " : " + entry.getValue().getSquadRank());
+//                    ref.child("userStats").child(entry.getKey()).setValue(entry.getValue());
+//                }
+//            }
+//        }
+//        else
+//            Log.d(TAG, "stats list is null");
+//
+//        exit();
+//    }
 
     private void getUserStats() {
         Log.d(TAG, "getUserStats: called");

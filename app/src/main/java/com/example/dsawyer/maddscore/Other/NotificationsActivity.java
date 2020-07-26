@@ -2,6 +2,7 @@ package com.example.dsawyer.maddscore.Other;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.dsawyer.maddscore.ObjectMaps.NotificationUserMap;
 import com.example.dsawyer.maddscore.Objects.Notification;
+import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.Profile.ProfileActivity;
 import com.example.dsawyer.maddscore.R;
 import com.example.dsawyer.maddscore.Objects.Squad;
@@ -20,6 +23,7 @@ import com.example.dsawyer.maddscore.Utils.NotificationRecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +46,7 @@ public class NotificationsActivity extends AppCompatActivity implements
 
     private NotificationRecyclerView adapter;
     private NotificationRecyclerView.OnRequestClickListener listener;
-    private ArrayList<Notification> myNotifications;
+    private ArrayList<NotificationUserMap> myNotifications;
 
     private RecyclerView recyclerView;
     RelativeLayout no_notifications;
@@ -61,8 +65,10 @@ public class NotificationsActivity extends AppCompatActivity implements
         go_back.setOnClickListener(this);
 
         ref = FirebaseDatabase.getInstance().getReference();
+
         if(FirebaseAuth.getInstance().getCurrentUser() != null) {
             UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
             checkNotifications();
         }
 
@@ -97,10 +103,10 @@ public class NotificationsActivity extends AppCompatActivity implements
     }
 
     public void acceptFriendRequest(final Notification n) {
-        Log.d(TAG, "acceptFriendRequest: ");
+        Log.d(TAG, "acceptFriendRequest: called");
 
         // add mUser to current users friendList
-        ref.child("friendsList").child(UID).child(n.getSender()).setValue(true)
+        ref.child("friendsList").child(UID).child(n.getSenderID()).setValue(true)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -108,7 +114,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                             Log.d(TAG, "current users friendsList updated");
 
                             //add current user to mUsers friendsList
-                            ref.child("friendsList").child(n.getSender()).child(UID).setValue(true)
+                            ref.child("friendsList").child(n.getSenderID()).child(UID).setValue(true)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -126,7 +132,7 @@ public class NotificationsActivity extends AppCompatActivity implements
     }
 
     public void acceptSquadInvite(final Notification n) {
-        Log.d(TAG, "acceptSquadInvite: ");
+        Log.d(TAG, "acceptSquadInvite: called");
 
         //get current users squad
         Query query = ref.child("squads").child(n.getSquadID());
@@ -139,37 +145,28 @@ public class NotificationsActivity extends AppCompatActivity implements
                         Log.d(TAG, "Squad was found");
 
                         // add user to squad user list
-                        ref.child("squads").child(squad.getSquadID()).child("userList").child(UID).setValue(true)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Log.d(TAG, "user was added to squad userList");
+                        ref.child("squads").child(squad.getSquadID()).child("memberList").child(UID).setValue(true)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "user was added to squad userList");
 
-                                            //add squadID to user profile
-                                            ref.child("users").child(UID).child("mySquad").setValue(squad.getSquadID())
-                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if (task.isSuccessful()) {
-                                                                Log.d(TAG, "users mySquad node was updated");
+                                        //add squadID to user profile
+                                        ref.child("users").child(UID).child("squad").setValue(squad.getSquadID())
+                                                .addOnCompleteListener(task1 -> {
+                                                    if (task1.isSuccessful()) {
+                                                        Log.d(TAG, "users squad node was updated");
 
-                                                                //add squad rank to user profile
-                                                                ref.child("userStats").child(UID).child("squadRank").setValue(squad.getMemberList().size() + 1)
-                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                            @Override
-                                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                                if (task.isSuccessful()) {
-                                                                                    Log.d(TAG, "users rank has been set");
-                                                                                    removeNotification(n);
-                                                                                }
-                                                                            }
-                                                                        });
-                                                            }
-                                                        }
-                                                    });
+                                                        //add squad rank to user profile
+                                                        ref.child("users").child(UID).child("squad_rank").setValue(squad.getMemberList().size() + 1)
+                                                                .addOnCompleteListener(task11 -> {
+                                                                    if (task11.isSuccessful()) {
+                                                                        Log.d(TAG, "users rank has been set");
+                                                                        removeNotification(n);
+                                                                    }
+                                                                });
+                                                    }
+                                                });
 
-                                        }
                                     }
                                 });
                     }
@@ -187,7 +184,7 @@ public class NotificationsActivity extends AppCompatActivity implements
     }
 
     public void acceptSquadRequest(final Notification n) {
-        Log.d(TAG, "acceptSquadRequest: ");
+        Log.d(TAG, "acceptSquadRequest: called");
 
         //get current users squad
         Query query = ref.child("squads").child(n.getSquadID());
@@ -200,7 +197,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                         Log.d(TAG, "found squad");
 
                         // add user to squad user list
-                        ref.child("squads").child(squad.getSquadID()).child("userList").child(n.getSender()).setValue(true)
+                        ref.child("squads").child(squad.getSquadID()).child("userList").child(n.getSenderID()).setValue(true)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -208,7 +205,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                                             Log.d(TAG, "user was added to squad userList");
 
                                             //add squadID to user profile
-                                            ref.child("users").child(n.getSender()).child("mySquad").setValue(squad.getSquadID())
+                                            ref.child("users").child(n.getSenderID()).child("mySquad").setValue(squad.getSquadID())
                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
@@ -216,7 +213,7 @@ public class NotificationsActivity extends AppCompatActivity implements
                                                                 Log.d(TAG, "users mySquad node was updated");
 
                                                                 //add squad rank to user profile
-                                                                ref.child("userStats").child(n.getSender()).child("squadRank").setValue(squad.getMemberList().size() + 1)
+                                                                ref.child("userStats").child(n.getSenderID()).child("squadRank").setValue(squad.getMemberList().size() + 1)
                                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<Void> task) {
@@ -248,7 +245,7 @@ public class NotificationsActivity extends AppCompatActivity implements
     }
 
     public void declineRequest(final Notification n) {
-        Log.d(TAG, "declineRequest: ");
+        Log.d(TAG, "declineRequest: called");
 
         ref.child("notifications").child(UID).child(n.getNotificationID()).removeValue()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -261,67 +258,119 @@ public class NotificationsActivity extends AppCompatActivity implements
     }
 
     public void removeNotification(final Notification n) {
-        Log.d(TAG, "removeNotification: ");
+        Log.d(TAG, "removeNotification: called");
         ref.child("notifications").child(UID).child(n.getNotificationID()).removeValue()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "notification removed from database");
-                            removeActiveRequest(n);
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "notification removed from database");
+                        removeActiveRequest(n);
                     }
                 });
     }
 
     public void removeActiveRequest(final Notification n) {
-        Log.d(TAG, "removeActiveRequest: ");
+        Log.d(TAG, "removeActiveRequest: called");
 
-        ref.child("activeRequests").child(n.getSender()).child(n.getNotificationID()).removeValue()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "active request removed from database");
-                            // update recyclerView
-                            myNotifications.remove(n);
-                            if (myNotifications.isEmpty()) {
-                                no_notifications.setVisibility(View.VISIBLE);
-                                adapter.notifyDataSetChanged();
-                            }
-                            else {
-                                no_notifications.setVisibility(View.GONE);
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
+        ref.child("activeRequests").child(n.getSenderID()).child(n.getNotificationID()).removeValue()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "active request removed from database");
+
+                        // update recyclerView
+                        myNotifications.remove(n);
+                        if (myNotifications.isEmpty())
+                            no_notifications.setVisibility(View.VISIBLE);
+                        else
+                            no_notifications.setVisibility(View.GONE);
+
+                        adapter.notifyDataSetChanged();
                     }
                 });
     }
 
     private void checkNotifications() {
-        Log.d(TAG, "checkNotifications: ");
-        Query query = ref.child("notifications").child(UID);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        Log.d(TAG, "checkNotifications: called");
+
+        Query notificationQuery = ref.child("notifications").child(UID);
+
+        notificationQuery.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Notification notification;
-                if (dataSnapshot.exists()) {
-                    myNotifications.clear();
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        notification = ds.getValue(Notification.class);
-                        if (notification != null)
-                            myNotifications.add(notification);
-                    }
-                    if (!myNotifications.isEmpty()) {
-                        adapter = new NotificationRecyclerView(NotificationsActivity.this, listener, myNotifications);
-                        recyclerView.setAdapter(adapter);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(NotificationsActivity.this));
-                    }
-                    else
-                        no_notifications.setVisibility(View.VISIBLE);
-                }
-                else
-                    no_notifications.setVisibility(View.VISIBLE);
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Notification notification = dataSnapshot.getValue(Notification.class);
+
+                if (notification != null) {
+                    Query userQuery = ref.child("users").child(notification.getSenderID());
+
+                    userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.exists()) {
+                                User user = dataSnapshot.getValue(User.class);
+
+                                if (user != null) {
+                                    NotificationUserMap userMap = new NotificationUserMap(
+                                            notification,
+                                            user.getName(),
+                                            user.getUsername(),
+                                            user.getPhotoUrl());
+
+                                    if (notification.getNotificationType() == Notification.SQUAD_INVITE) {
+                                        Query squadQuery = ref.child("squads").child(notification.getSquadID());
+
+                                        squadQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                                if (dataSnapshot.exists()) {
+                                                    Squad squad = dataSnapshot.getValue(Squad.class);
+
+                                                    if (squad != null) {
+                                                        userMap.setSquadName(squad.getSquadName());
+                                                        addRecyclerViewItem(userMap);
+                                                    }
+                                                    else
+                                                        Log.d(TAG, "squad was null");
+                                                } else
+                                                    Log.d(TAG, "onDataChange: cant find squad");
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    } else
+                                        addRecyclerViewItem(userMap);
+
+                                } else
+                                    Log.d(TAG, "user is null");
+                            } else
+                                Log.d(TAG, "user not found");
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                } else
+                    Log.d(TAG, "null notification");
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -329,6 +378,48 @@ public class NotificationsActivity extends AppCompatActivity implements
 
             }
         });
+
+
+
+
+//                if (dataSnapshot.exists()) {
+//                    myNotifications.clear();
+//
+//                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                       Notification notification = ds.getValue(Notification.class);
+//
+//                        if (notification != null)
+//                            myNotifications.add(notification);
+//                    }
+//
+//                    if (!myNotifications.isEmpty()) {
+//
+//                        if (adapter != null) {
+//
+//                        } else {
+//                            adapter = new NotificationRecyclerView(NotificationsActivity.this, listener, myNotifications);
+//                            recyclerView.setAdapter(adapter);
+//                            recyclerView.setLayoutManager(new LinearLayoutManager(NotificationsActivity.this));
+//                        }
+//                    }
+//                    else
+//                        no_notifications.setVisibility(View.VISIBLE);
+//                }
+//                else
+//                    no_notifications.setVisibility(View.VISIBLE);
+    }
+
+    public void addRecyclerViewItem(NotificationUserMap userMap) {
+        myNotifications.add(userMap);
+
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
+        else {
+            adapter = new NotificationRecyclerView(NotificationsActivity.this, listener, myNotifications);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(NotificationsActivity.this));
+        }
+
     }
 
     @Override

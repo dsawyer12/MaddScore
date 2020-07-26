@@ -24,23 +24,21 @@ public class SquadListRecyclerView extends RecyclerView.Adapter<SquadListRecycle
 
     private Context context;
     private ArrayList<User> listOfUsers;
-    private ArrayList<UserStats> userStats;
     private OnItemClicked listener;
 
     public interface OnItemClicked {
         void onClick(User user);
     }
 
-    public SquadListRecyclerView(Context context, OnItemClicked listener, ArrayList<User> listOfUsers, ArrayList<UserStats> userStats) {
+    public SquadListRecyclerView(Context context, OnItemClicked listener, ArrayList<User> listOfUsers) {
         Log.d(TAG, String.valueOf(listOfUsers.size()));
-        Log.d(TAG, String.valueOf(userStats.size()));
+
         this.context = context;
         this.listOfUsers = listOfUsers;
-        this.userStats = userStats;
         this.listener = listener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView playerUsername, playerName, playerRank;
         CircleImageView playerImage;
         LinearLayout rootView;
@@ -66,19 +64,14 @@ public class SquadListRecyclerView extends RecyclerView.Adapter<SquadListRecycle
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.playerUsername.setText(listOfUsers.get(position).getUsername());
         holder.playerName.setText(listOfUsers.get(position).getName());
-        holder.playerRank.setText(String.valueOf(userStats.get(position).getSquadRank()));
-        if (listOfUsers.get(position).getPhotoUrl() != null){
+        holder.playerRank.setText(String.valueOf(listOfUsers.get(position).getSquad_rank()));
+
+        if (listOfUsers.get(position).getPhotoUrl() != null)
             Glide.with(context).load(listOfUsers.get(position).getPhotoUrl()).into(holder.playerImage);
-        }
-        else{
+        else
             Glide.with(context).load(R.mipmap.default_profile_img).into(holder.playerImage);
-        }
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClick(listOfUsers.get(holder.getAdapterPosition()));
-            }
-        });
+
+        holder.rootView.setOnClickListener(v -> listener.onClick(listOfUsers.get(holder.getAdapterPosition())));
     }
     @Override
     public int getItemCount() {

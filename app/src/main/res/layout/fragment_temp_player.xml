@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/PrimaryBackground"
+    android:background="@drawable/accessory_dark_fade_vertical"
     android:clickable="true"
     android:focusable="true">
 
     <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@drawable/accessory_bottom_border_dark">
@@ -49,105 +49,84 @@
         android:layout_marginTop="200dp"/>
 
     <LinearLayout
-        android:id="@+id/main_view"
+        android:id="@+id/relLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar">
 
-        <LinearLayout
-            android:id="@+id/relLayout"
-            android:orientation="vertical"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="42dp"
+            app:civ_border_color="@color/black"
+            app:civ_border_width="2dp"
+            android:src="@mipmap/default_profile_img"
+            android:layout_gravity="center"
+            app:srcCompat="@mipmap/profile" />
+
+
+        <TextView
+            android:id="@+id/player_userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            android:fontFamily="serif"
+            android:text="username"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/player_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:text="name name"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/player_rounds"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/PrimaryBackground">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profileImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="42dp"
-                app:civ_border_color="@color/black"
-                app:civ_border_width="2dp"
-                android:src="@mipmap/default_profile_img"
-                android:layout_gravity="center"
-                app:srcCompat="@mipmap/profile" />
-
-
-            <TextView
-                android:id="@+id/player_userName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_gravity="center"
-                android:fontFamily="serif"
-                android:text="username"
-                android:textAlignment="center"
-                android:textColor="@color/colorPrimary"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/player_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="@color/white"
-                android:text="name name"
-                android:textAlignment="center"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/player_rounds"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:text="0 Rounds Played"
-                android:textAlignment="center" />
-
-        </LinearLayout>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/player_cardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp">
-
-            <LinearLayout
-                android:id="@+id/linearLayout"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:background="@drawable/accessory_full_border">
-
-                <Button
-                    android:id="@+id/link_player_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/button_accessory"
-                    android:textAllCaps="false"
-                    android:text="Link Player With Their Account"/>
-
-                <Button
-                    android:id="@+id/delete_friend_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_accessory"
-                    android:textAllCaps="false"
-                    android:text="Delete Player"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:text="0 Rounds Played"
+            android:textAlignment="center" />
 
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="40dp"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/link_player_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_accessory"
+            android:textAllCaps="false"
+            android:text="Link Player With Their Account"/>
+
+        <Button
+            android:id="@+id/delete_friend_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_accessory"
+            android:textAllCaps="false"
+            android:text="Delete Player"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

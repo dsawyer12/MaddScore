@@ -202,8 +202,6 @@ public class MessageFragment extends Fragment implements View.OnClickListener {
             Notification notification = new Notification(
                     key,
                     UID,
-                    currentUser.getName(),
-                    currentUser.getPhotoUrl(),
                     recipient.getUserID(),
                     Notification.MESSAGE,
                     date,

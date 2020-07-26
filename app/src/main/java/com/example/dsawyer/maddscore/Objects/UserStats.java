@@ -2,13 +2,12 @@ package com.example.dsawyer.maddscore.Objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
-public class UserStats implements Parcelable, Comparable<UserStats> {
+public class UserStats implements Parcelable {
 
     private String userID, bestRoundCourse;
     private long bestRoundDate;
-    private int numRounds, bestRoundScore, squadRank, holesThrown,
+    private int numRounds, bestRoundScore, holesThrown,
             holeInOnes, eagles, pars, birdies, bogies, doublePlus, eagleAces;
     private double scoreAVG;
 
@@ -24,7 +23,6 @@ public class UserStats implements Parcelable, Comparable<UserStats> {
         bestRoundDate = in.readLong();
         numRounds = in.readInt();
         bestRoundScore = in.readInt();
-        squadRank = in.readInt();
         holesThrown = in.readInt();
         holeInOnes = in.readInt();
         eagles = in.readInt();
@@ -43,7 +41,6 @@ public class UserStats implements Parcelable, Comparable<UserStats> {
         dest.writeLong(bestRoundDate);
         dest.writeInt(numRounds);
         dest.writeInt(bestRoundScore);
-        dest.writeInt(squadRank);
         dest.writeInt(holesThrown);
         dest.writeInt(holeInOnes);
         dest.writeInt(eagles);
@@ -182,18 +179,5 @@ public class UserStats implements Parcelable, Comparable<UserStats> {
 
     public void setBestRoundScore(int bestRoundScore) {
         this.bestRoundScore = bestRoundScore;
-    }
-
-    public Integer getSquadRank() {
-        return squadRank;
-    }
-
-    public void setSquadRank(int squadRank) {
-        this.squadRank = squadRank;
-    }
-
-    @Override
-    public int compareTo(@NonNull UserStats userStats) {
-        return this.getSquadRank().compareTo(userStats.squadRank);
     }
 }
