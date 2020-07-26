@@ -104,6 +104,7 @@ public class ProfileActivity extends AppCompatActivity implements
         ApplicationPreferences.getSharedPreferences(this, ApplicationPreferences.HIDE_SQUAD_CARD);
         if (ApplicationPreferences.getProfilePreferences(ApplicationPreferences.HIDE_SQUAD_CARD))
             HIDE_SQUAD_CARD = true;
+
         ApplicationPreferences.getSharedPreferences(this, ApplicationPreferences.HIDE_STATS_CARD);
         if (ApplicationPreferences.getProfilePreferences(ApplicationPreferences.HIDE_STATS_CARD))
             HIDE_STATS_CARD = true;
@@ -161,9 +162,12 @@ public class ProfileActivity extends AppCompatActivity implements
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.exists()) {
                     mUser = dataSnapshot.getValue(User.class);
+
                     if (mUser != null) {
+
                         if (!mUser.isCompleteAccount()) {
                             loadingDialog.dismiss();
                             Log.d(TAG, "onDataChange: user has not yet completed their account");
@@ -173,12 +177,16 @@ public class ProfileActivity extends AppCompatActivity implements
                         else {
                             name.setText(mUser.getName());
                             username.setText(mUser.getUsername());
+
                             if (mUser.getPhotoUrl() != null)
                                 Glide.with(getApplicationContext()).load(mUser.getPhotoUrl()).into(profileImage);
 
                             initSquadData();
                             getUserStats();
                         }
+                    } else {
+                        Log.d(TAG, "onDataChange: null ptr");
+                        loadingDialog.dismiss();
                     }
                 }
                 else {
@@ -197,19 +205,23 @@ public class ProfileActivity extends AppCompatActivity implements
 
     private void initSquadData() {
         Log.d(TAG, "initSquadData: called");
-        loadingDialog.show();
         View squadCardView = getLayoutInflater().inflate(R.layout.layout_squad_card, linear_feed, true);
         View squadView = squadCardView.findViewById(R.id.squad_root);
+
         if (HIDE_SQUAD_CARD)
             squadView.setVisibility(View.GONE);
+
         if (mUser.getSquad() != null) {
             Log.d(TAG, "user has a squad");
             Query query = ref.child("squads").child(mUser.getSquad());
+
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                     if (dataSnapshot.exists()) {
                         squad = dataSnapshot.getValue(Squad.class);
+
                         if (squad != null) {
                             CardView rootView = squadCardView.findViewById(R.id.squad_root);
                             LinearLayout active_squad_layout = squadCardView.findViewById(R.id.active_squad_layout);
@@ -220,6 +232,7 @@ public class ProfileActivity extends AppCompatActivity implements
                             TextView squad_member_cnt = active_squad_layout.findViewById(R.id.squad_member_cnt);
                             squad_member_cnt.setText(squad.getMemberList().size() + " member(s)");
                             TextView user_squad_rank = active_squad_layout.findViewById(R.id.user_squad_rank);
+
                             switch(mUser.getSquad_rank()) {
                                 case (1):
                                     linear_parent.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.rank_fade_1));
@@ -271,15 +284,21 @@ public class ProfileActivity extends AppCompatActivity implements
         Log.d(TAG, "getUserStats: called");
         View statsCardView = getLayoutInflater().inflate(R.layout.layout_stats_card, linear_feed, true);
         View statsView = statsCardView.findViewById(R.id.stats_root);
+
         if (HIDE_STATS_CARD)
             statsView.setVisibility(View.GONE);
+
         Query query = ref.child("userStats").child(currentUser.getUid());
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.exists()) {
                     Log.d(TAG, "user stats found");
+
                     userStats = dataSnapshot.getValue(UserStats.class);
+
                     if (userStats != null) {
                         rounds.setText(String.valueOf(userStats.getNumRounds()));
 
@@ -291,25 +310,33 @@ public class ProfileActivity extends AppCompatActivity implements
                             LinearLayout active_stats_layout = statsCardView.findViewById(R.id.active_stats_layout);
                             active_stats_layout.setVisibility(View.VISIBLE);
                             TextView score_avg = statsCardView.findViewById(R.id.score_AVG);
+
                             if (userStats.getScoreAVG() == 0)
                                 score_avg.setText("E");
                             else
                                 score_avg.setText(String.valueOf(userStats.getScoreAVG()));
+
                             TextView best_round_score = statsCardView.findViewById(R.id.stats_best_score);
+
                             if (userStats.getBestRoundScore() == 0)
                                 best_round_score.setText("E");
                             else
                                 best_round_score.setText(String.valueOf(userStats.getBestRoundScore()));
+
                             if (userStats.getBestRoundDate() != 0) {
                                 TextView best_round_date = statsCardView.findViewById(R.id.stats_best_score_date);
                                 SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
                                 best_round_date.setText(sdf.format(userStats.getBestRoundDate()));
                             }
+
                             if (userStats.getBestRoundCourse() != null) {
+
                                 Query query = ref.child("courses").child(userStats.getBestRoundCourse());
+
                                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                                         if (dataSnapshot.exists()) {
                                             Log.d(TAG, "best round course found in DB");
                                             bestRoundCourse = dataSnapshot.getValue(Course.class);
@@ -318,10 +345,13 @@ public class ProfileActivity extends AppCompatActivity implements
                                         }
                                         else {
                                             Log.d(TAG, "course not found in DB. Checking personal courses...");
+
                                             Query query = ref.child("customCourses").child(currentUser.getUid()).child(userStats.getBestRoundCourse());
+
                                             query.addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                                                     if (dataSnapshot.exists()) {
                                                         Log.d(TAG, "best round course found in personal DB");
                                                         bestRoundCourse = dataSnapshot.getValue(Course.class);
@@ -364,9 +394,11 @@ public class ProfileActivity extends AppCompatActivity implements
 
     public void getUserFriends() {
         Query query = ref.child("friendsList").child(currentUser.getUid());
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.exists())
                     numFriends.setText(String.valueOf(dataSnapshot.getChildrenCount()));
                 else
@@ -382,6 +414,7 @@ public class ProfileActivity extends AppCompatActivity implements
 
     private void checkNotifications() {
         Query query = ref.child("notifications").child(currentUser.getUid());
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -403,6 +436,7 @@ public class ProfileActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.profile_activity);
+
         if (drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START);
 
@@ -412,21 +446,26 @@ public class ProfileActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.profile_menu, menu);
+
         if (HIDE_SQUAD_CARD)
             menu.getItem(1).setChecked(true);
+
         if (HIDE_STATS_CARD)
             menu.getItem(2).setChecked(true);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case(R.id.edit_profile):
                 Intent intent1 = new Intent(this, EditProfileActivity.class);
                 intent1.putExtra("mUser", mUser);
                 startActivity(intent1);
                 break;
+
             case(R.id.hide_squad_card):
                 if (item.isChecked()) {
                     HIDE_SQUAD_CARD = false;
@@ -443,6 +482,7 @@ public class ProfileActivity extends AppCompatActivity implements
                 ApplicationPreferences.getSharedPreferences(this, ApplicationPreferences.HIDE_SQUAD_CARD);
                 ApplicationPreferences.setPreference(ApplicationPreferences.HIDE_SQUAD_CARD, HIDE_SQUAD_CARD);
                 break;
+
             case(R.id.hide_stats_card):
                 if (item.isChecked()) {
                     HIDE_STATS_CARD = false;
@@ -473,30 +513,35 @@ public class ProfileActivity extends AppCompatActivity implements
                 overridePendingTransition(0,0);
                 intent1.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_Leaderboards):
                 Intent intent2 = new Intent(this, LeaderboardsActivity.class);
                 startActivity(intent2);
                 overridePendingTransition(0,0);
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_CHIPP):
                 Intent intent3 = new Intent(this, CHIPPActivity.class);
                 startActivity(intent3);
                 overridePendingTransition(0,0);
                 intent3.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_setings):
                 Intent intent4 = new Intent(this, SettingsActivity.class);
                 startActivity(intent4);
                 overridePendingTransition(0,0);
                 intent4.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_help):
                 Intent intent5 = new Intent(this, HelpActivity.class);
                 startActivity(intent5);
                 overridePendingTransition(0,0);
                 intent5.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_notifications):
                 Intent intent6 = new Intent(this, NotificationsActivity.class);
                 startActivity(intent6);
@@ -507,6 +552,7 @@ public class ProfileActivity extends AppCompatActivity implements
 
         DrawerLayout drawer = findViewById(R.id.profile_activity);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
@@ -528,11 +574,15 @@ public class ProfileActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case (R.id.squad_root):
+                break;
+
             case (R.id.squads_more_info_btn):
                 startActivity(new Intent(ProfileActivity.this, SquadActivity.class));
                 break;
+
 //            case (R.id.squad_card_options):
 //                Toast.makeText(this, "squad options", Toast.LENGTH_SHORT).show();
 //                break;
@@ -540,20 +590,26 @@ public class ProfileActivity extends AppCompatActivity implements
 //            case (R.id.stats_card_options):
 //                Toast.makeText(this, "stats options", Toast.LENGTH_SHORT).show();
 //                break;
+
             case (R.id.stats_root):
                 startActivity(new Intent(ProfileActivity.this, StatsActivity.class));
                 break;
+
             case (R.id.notifications):
                 Intent intent = new Intent(this, NotificationsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 break;
+
             case(R.id.logout):
                 FirebaseAuth.getInstance().signOut();
+
                 if(FirebaseAuth.getInstance().getCurrentUser() == null) {
                     Intent intent1 = new Intent(this, LoginActivity.class);
                     intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
                     startActivity(intent1);
+
                     Toast toast= Toast.makeText(getApplicationContext(),
                             "Successfully Logged Out!", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 300);

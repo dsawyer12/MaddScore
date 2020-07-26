@@ -96,9 +96,8 @@ public class NotificationRecyclerView extends RecyclerView.Adapter<NotificationR
         holder.decline.setOnClickListener(v -> listener.onRequestDeclined(myNotifications.get(holder.getAdapterPosition()).getNotification()));
 
         holder.rootView.setOnClickListener(v -> {
-            if (myNotifications.get(holder.getAdapterPosition()).getNotification().getNotificationType() == Notification.MESSAGE) {
+            if (myNotifications.get(holder.getAdapterPosition()).getNotification().getNotificationType() == Notification.MESSAGE)
                 listener.onRequestClicked(myNotifications.get(holder.getAdapterPosition()).getNotification());
-            }
         });
     }
 

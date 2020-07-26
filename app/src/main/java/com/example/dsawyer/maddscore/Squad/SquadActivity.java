@@ -68,7 +68,7 @@ public class SquadActivity extends AppCompatActivity implements
     private boolean hasSquad = false;
     private ImageView squad_events_btn, squad_members_btn;
     private RelativeLayout no_squad_layout;
-//    private LoadingDialog loadingDialog;
+    LoadingDialog loadingDialog;
 
     @Override
     public void onSquadMemberClicked(User user) {
@@ -80,6 +80,7 @@ public class SquadActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_squad);
 
+        loadingDialog = new LoadingDialog(this);
         squad_events_btn = findViewById(R.id.squad_events_btn);
         squad_members_btn = findViewById(R.id.squad_members_btn);
         no_squad_layout = findViewById(R.id.no_squad_layout);
@@ -94,8 +95,10 @@ public class SquadActivity extends AppCompatActivity implements
         setUpNavDrawer();
 
         ref = FirebaseDatabase.getInstance().getReference();
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
             initUserData();
         } else
             Toast.makeText(this, "Something went wrong while trying to retrieve your account data.", Toast.LENGTH_LONG).show();
@@ -125,73 +128,79 @@ public class SquadActivity extends AppCompatActivity implements
     }
 
     private void initUserData() {
-//        loadingDialog = new LoadingDialog(this);
-//        loadingDialog.show();
+        loadingDialog.show();
 
         Query query = ref.child("users").child(currentUser.getUid());
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.exists()) {
                     mUser = dataSnapshot.getValue(User.class);
+
                     if (mUser != null) {
                         if(mUser.getSquad() != null) {
                             hasSquad = true;
                             invalidateOptionsMenu();
                             initializeSquadData();
                         } else {
-//                            loadingDialog.dismiss();
+                            loadingDialog.dismiss();
                             no_squad_layout.setVisibility(View.VISIBLE);
 //                            setFragment(new NoSquadFragment(), R.id.frame);
                         }
                     }
                     else {
-//                        loadingDialog.dismiss();
+                        loadingDialog.dismiss();
                         Toast.makeText(getApplicationContext(), "Something went wrong while trying to retrieve your user data.", Toast.LENGTH_LONG).show();
                     }
                 } else {
-//                    loadingDialog.dismiss();
+                    loadingDialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Something went wrong while trying to retrieve your user data.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-//                loadingDialog.dismiss();
+                loadingDialog.dismiss();
             }
         });
     }
 
     private void initializeSquadData() {
         Query query = ref.child("squads").child(mUser.getSquad());
+
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.exists()) {
                     squad = dataSnapshot.getValue(Squad.class);
+
                     if (squad != null) {
-//                        loadingDialog.dismiss();
                         squad_events_btn.setVisibility(View.VISIBLE);
                         squad_members_btn.setVisibility(View.VISIBLE);
+
                         SocialFragment socialFragment = new SocialFragment();
                         Bundle args = new Bundle();
                         args.putParcelable("squad", squad);
                         args.putParcelable("mUser", mUser);
                         socialFragment.setArguments(args);
+                        loadingDialog.dismiss();
                         setFragment(socialFragment, R.id.frame, "socialFragment");
                     } else {
-//                        loadingDialog.dismiss();
+                        loadingDialog.dismiss();
                         Toast.makeText(getApplicationContext(), "Something went wrong while trying to retrieve your squad data.", Toast.LENGTH_LONG).show();
                     }
                 } else {
-//                    loadingDialog.dismiss();
+                    loadingDialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Something went wrong while trying to retrieve your squad data.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-//                loadingDialog.dismiss();
+                loadingDialog.dismiss();
             }
         });
     }
@@ -199,6 +208,7 @@ public class SquadActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.squad_activity);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
@@ -224,18 +234,21 @@ public class SquadActivity extends AppCompatActivity implements
         menu.getItem(0).setVisible(hasSquad);
         menu.getItem(1).setVisible(hasSquad);
         menu.getItem(2).setVisible(hasSquad);
+
         return true;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.squad_menu, menu);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case(R.id.edit_players):
 //                setFragment(new PlayersEditFragment());
                 break;
@@ -259,6 +272,7 @@ public class SquadActivity extends AppCompatActivity implements
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
+
             case(R.id.side_menu_events):
                 Intent intent1 = new Intent(this, EventsActivity.class);
                 finish();
@@ -266,6 +280,7 @@ public class SquadActivity extends AppCompatActivity implements
                 overridePendingTransition(0,0);
                 intent1.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_Leaderboards):
                 Intent intent2 = new Intent(this, LeaderboardsActivity.class);
                 finish();
@@ -273,6 +288,7 @@ public class SquadActivity extends AppCompatActivity implements
                 overridePendingTransition(0,0);
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_CHIPP):
                 Intent intent3 = new Intent(this, CHIPPActivity.class);
                 finish();
@@ -280,6 +296,7 @@ public class SquadActivity extends AppCompatActivity implements
                 overridePendingTransition(0,0);
                 intent3.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_setings):
                 Intent intent4 = new Intent(this, SettingsActivity.class);
                 finish();
@@ -287,6 +304,7 @@ public class SquadActivity extends AppCompatActivity implements
                 overridePendingTransition(0,0);
                 intent4.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_help):
                 Intent intent5 = new Intent(this, HelpActivity.class);
                 finish();
@@ -294,6 +312,7 @@ public class SquadActivity extends AppCompatActivity implements
                 overridePendingTransition(0,0);
                 intent5.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 break;
+
             case(R.id.side_menu_notifications):
                 Intent intent6 = new Intent(this, NotificationsActivity.class);
                 startActivity(intent6);
@@ -304,6 +323,7 @@ public class SquadActivity extends AppCompatActivity implements
 
         DrawerLayout drawer = findViewById(R.id.squad_activity);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
@@ -316,12 +336,15 @@ public class SquadActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case (R.id.logout):
                 FirebaseAuth.getInstance().signOut();
+
                 if(FirebaseAuth.getInstance().getCurrentUser() == null) {
                     Intent intent = new Intent(this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
+
                     Toast toast= Toast.makeText(getApplicationContext(),"Successfully Logged Out!", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 300);
                     toast.show();
