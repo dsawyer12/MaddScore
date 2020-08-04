@@ -24,42 +24,82 @@
                 android:layout_height="30dp"
                 android:src="@drawable/ic_back_arrow"/>
 
-            <TextView
-                android:id="@+id/toolbar_title"
+            <EditText
+                android:id="@+id/search_field"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center"
                 android:paddingStart="30dp"
                 android:paddingEnd="0dp"
-                android:text="Members"
+                android:layout_weight="1"
+                android:text="@string/Squads"
+                android:hint="Search members..."
+                android:enabled="false"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapWords"
+                android:backgroundTint="@color/PrimaryBackground"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageView
-                android:id="@+id/search_btn"
+                android:id="@+id/search_button"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginEnd="30dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_search_light"/>
+                android:src="@drawable/ic_search_light"
+                android:layout_gravity="center"/>
 
         </LinearLayout>
 
     </android.support.v7.widget.Toolbar>
 
-    <RelativeLayout
-        android:id="@+id/current_user_card"
+    <TextView
+        android:id="@+id/no_search_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No results were found."
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:layout_margin="60dp"/>
+
+    <LinearLayout
+        android:id="@+id/meta_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/transparent_bottom_border"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp">
+        android:orientation="vertical">
 
-    </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="0dp"
+            android:textColor="@color/white"
+            android:text="YOU"/>
+
+        <RelativeLayout
+            android:id="@+id/current_user_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/transparent_bottom_border"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="20dp">
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="0dp"
+            android:textColor="@color/white"
+            android:text="OTHERS"/>
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

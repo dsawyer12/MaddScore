@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
-import com.example.dsawyer.maddscore.Objects.UserStats;
 
 import java.util.ArrayList;
 
@@ -79,10 +78,10 @@ public class SquadMemberListAdapter extends BaseAdapter {
         holder.name.setText(userList.get(position).getName());
         for (int i = 0; i < userList.size(); i++) {
             if (userList.get(position).getUserID().equals(userList.get(i).getUserID())) {
-                holder.rank.setText(String.valueOf(userList.get(position).getSquad_rank()));
+                holder.rank.setText(String.valueOf(userList.get(position).getSquadRank()));
             }
         }
-        holder.rank.setText(String.valueOf(userList.get(position).getSquad_rank()));
+        holder.rank.setText(String.valueOf(userList.get(position).getSquadRank()));
         if (userList.get(position).getPhotoUrl() != null) {
             Glide.with(context).load(userList.get(position).getPhotoUrl()).into(holder.playerImage);
         }

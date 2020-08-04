@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.dsawyer.maddscore.Objects.Post;
 import com.example.dsawyer.maddscore.ObjectMaps.PostUserMap;
 import com.example.dsawyer.maddscore.R;
 
@@ -65,8 +64,8 @@ public class SocialPostRecyclerViewAdapter extends RecyclerView.Adapter<SocialPo
         return posts;
     }
 
-    public Post getPost(int position) {
-        return posts.get(position).getPost();
+    public PostUserMap getPostMap(int position) {
+        return posts.get(position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -138,6 +137,8 @@ public class SocialPostRecyclerViewAdapter extends RecyclerView.Adapter<SocialPo
         }
 
         if (posts.get(holder.getAdapterPosition()).getPost().getComments() != null) {
+            Log.i(TAG, "onBindViewHolder: num Comments : " + posts.get(holder.getAdapterPosition()).getPost().getComments().size());
+
             if (posts.get(holder.getAdapterPosition()).getPost().getComments().size() == 0)
                 holder.numComments.setText("");
             else

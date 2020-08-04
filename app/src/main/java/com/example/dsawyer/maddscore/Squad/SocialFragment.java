@@ -42,8 +42,7 @@ import java.util.HashMap;
 
 public class SocialFragment extends Fragment implements
         ConfirmDeletePostDialog.OnPostDeletedListener,
-        PostFragment.OnPostsUpdated,
-        PostCommentDialog.OnPostChangeListener {
+        PostFragment.OnPostsUpdated {
     private static final String TAG = "TAG";
 
     private FirebaseUser currentUser;
@@ -54,7 +53,7 @@ public class SocialFragment extends Fragment implements
     private SocialPostRecyclerViewAdapter adapter;
     private ArrayList<PostUserMap> posts;
 
-    final int loadCount = 20;
+    final int loadCount = 21;
     int totalItems = 0, finished = 0, lastVisibleItem;
     boolean isLoading = false, isLastItemReached = false;
     String lastKey, lastNode;
@@ -67,7 +66,7 @@ public class SocialFragment extends Fragment implements
 
     @Override
     public void onPostAdd(Post newPost) {
-        Log.d(TAG, "onPostAdd: ");
+        Log.d(TAG, "onPostAdd: called");
         if (getActivity() != null) {
             Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("postFragment");
             if (fragment != null)
@@ -82,7 +81,7 @@ public class SocialFragment extends Fragment implements
 
     @Override
     public void onPostEdit(PostUserMap updatedPost) {
-        Log.d(TAG, "onPostEdit: ");
+        Log.d(TAG, "onPostEdit: called");
         if (getActivity() != null) {
             Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("postFragment");
             if (fragment != null)
@@ -92,17 +91,11 @@ public class SocialFragment extends Fragment implements
 
     @Override
     public void onDelete(PostUserMap postMap) {
+        Log.d(TAG, "onDelete: called");
         if (adapter != null) {
             adapter.getPosts().remove(postMap);
             adapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void onCommentAdded() {
-        Log.d(TAG, "onCommentAdded: ");
-        if (adapter != null)
-            adapter.notifyDataSetChanged();
     }
 
     @Nullable
@@ -130,10 +123,9 @@ public class SocialFragment extends Fragment implements
             args.putParcelable("mUser", mUser);
             postFragment.setArguments(args);
             postFragment.setTargetFragment(this, 1000);
+
             if (getFragmentManager() != null)
                 postFragment.show(getFragmentManager(), "postFragment");
-//            if (getActivity() != null)
-//                ((SquadActivity) getActivity()).setFragment(postFragment, R.id.main_frame, "postFragment");
         });
 
         if (this.getArguments() != null) {
@@ -165,9 +157,9 @@ public class SocialFragment extends Fragment implements
                     totalItems = layoutManager.getItemCount();
                     lastVisibleItem = layoutManager.findLastVisibleItemPosition();
 
-                    if (!isLoading && (lastVisibleItem + 1) >= totalItems) {
-                        getSocialPosts();
+                    if (!isLoading && !isLastItemReached && (lastVisibleItem + 1) >= totalItems) {
                         isLoading = true;
+                        getSocialPosts();
                     }
                 }
             });
@@ -179,37 +171,38 @@ public class SocialFragment extends Fragment implements
     }
 
     public void setAdapterListeners() {
+        Log.d(TAG, "setAdapterListeners: called");
         listener = (v, position) -> {
             switch (v.getId()) {
                 case (R.id.post_like):
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                             .child("socialPosts")
                             .child(mUser.getSquad())
-                            .child(adapter.getPost(position).getPostID())
+                            .child(adapter.getPostMap(position).getPost().getPostID())
                             .child("userLikesList")
                             .child(currentUser.getUid());
 
-                    if (adapter.getPost(position).getUserLikesList() != null) {
-                        if (adapter.getPost(position).getUserLikesList().containsKey(currentUser.getUid())) {
-                            adapter.getPost(position).getUserLikesList().remove(currentUser.getUid());
+                    if (adapter.getPostMap(position).getPost().getUserLikesList() != null) {
+                        if (adapter.getPostMap(position).getPost().getUserLikesList().containsKey(currentUser.getUid())) {
+                            adapter.getPostMap(position).getPost().getUserLikesList().remove(currentUser.getUid());
                             ref.removeValue();
                         } else {
-                            adapter.getPost(position).getUserLikesList().put(currentUser.getUid(), true);
+                            adapter.getPostMap(position).getPost().getUserLikesList().put(currentUser.getUid(), true);
                             ref.setValue(true);
                         }
                     } else {
                         HashMap<String, Boolean> userList = new HashMap<>();
                         userList.put(currentUser.getUid(), true);
-                        adapter.getPost(position).setUserLikesList(userList);
+                        adapter.getPostMap(position).getPost().setUserLikesList(userList);
                         ref.setValue(true);
                     }
                     break;
 
                 case (R.id.post_comment):
                     PostCommentDialog pc = new PostCommentDialog();
-                    Post post = adapter.getPost(position);
+                    PostUserMap postMap = adapter.getPostMap(position);
                     Bundle args = new Bundle();
-                    args.putParcelable("post", post);
+                    args.putParcelable("postMap", postMap);
                     args.putParcelable("user", mUser);
                     pc.setArguments(args);
                     pc.setTargetFragment(this, 1001);
@@ -240,7 +233,6 @@ public class SocialFragment extends Fragment implements
                                         postFragment.setTargetFragment(this, 1002);
                                         if (getFragmentManager() != null)
                                             postFragment.show(getFragmentManager(), "postFragment");
-//                                        ((SquadActivity) getActivity()).setFragment(postFragment, R.id.main_frame, "postFragment");
                                     }
                                     return true;
 
@@ -276,27 +268,31 @@ public class SocialFragment extends Fragment implements
                 .child("socialPosts")
                 .child(mUser.getSquad());
 
-        Query query = ref.orderByChild("postID").limitToFirst(2);
+        Query query = ref.orderByKey().limitToFirst(2);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     lastKey = ds.getKey();
-                    Log.d(TAG, "last key : " + lastKey);
+                    Log.i(TAG, "last key : " + lastKey);
                     break;
                 }
 
-                if (lastKey != null)
+                if (lastKey != null) {
                     no_activity.setVisibility(View.GONE);
-                else
+                    getSocialPosts();
+                }
+                else {
                     no_activity.setVisibility(View.VISIBLE);
-
-                getSocialPosts();
+                    isLoading = false;
+                    loadingDialog.dismiss();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 loadingDialog.dismiss();
+                Log.i(TAG, "onCancelled: getLastPostKey : DISMISSED");
             }
         });
     }
@@ -304,12 +300,14 @@ public class SocialFragment extends Fragment implements
     public void getSocialPosts() {
         Log.d(TAG, "getSocialPosts: called");
         loadingDialog.show();
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("socialPosts").child(mUser.getSquad());
 
         posts = new ArrayList<>();
 
         if (!isLastItemReached) {
             Query postQuery;
+
             if (TextUtils.isEmpty(lastNode))
                 postQuery = ref.orderByKey().limitToLast(loadCount);
             else
@@ -318,14 +316,15 @@ public class SocialFragment extends Fragment implements
             postQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "child count : " + dataSnapshot.getChildrenCount());
                     if (dataSnapshot.hasChildren()) {
                         posts.clear();
 
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             Log.d(TAG, "RETRIEVED KEY : " + ds.getKey());
                             Post post = ds.getValue(Post.class);
-                            posts.add(new PostUserMap(post));
+
+                            if (post != null)
+                                posts.add(new PostUserMap(post));
                         }
 
                         if (posts.get(posts.size() - 1).getPost().getPostID().equals(lastNode)) {
@@ -336,32 +335,30 @@ public class SocialFragment extends Fragment implements
                         if (!posts.isEmpty()) {
                             lastNode = posts.get(0).getPost().getPostID();
                             Log.d(TAG, "Last Node : " + lastNode);
+
                             if (lastNode.equals(lastKey)) {
                                 isLastItemReached = true;
                                 Log.d(TAG, "last database key has been retrieved");
                             }
 
-                            PostUserMap currentPost;
                             DatabaseReference userRef;
 
-                            for (int i = 0; i < posts.size(); i++) {
-                                currentPost = posts.get(i);
-
+                            for (PostUserMap userMap : posts) {
                                 userRef = FirebaseDatabase.getInstance().getReference()
                                         .child("users")
-                                        .child(currentPost.getPost().getCreatorID());
+                                        .child(userMap.getPost().getCreatorID());
 
-                                PostUserMap finalCurrentPost = currentPost;
                                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         finished++;
+
                                         if (dataSnapshot.exists()) {
                                             User user = dataSnapshot.getValue(User.class);
                                             if (user != null) {
-                                                finalCurrentPost.setName(user.getName());
-                                                finalCurrentPost.setUsername(user.getUsername());
-                                                finalCurrentPost.setPhotoUrl(user.getPhotoUrl());
+                                                userMap.setName(user.getName());
+                                                userMap.setUsername(user.getUsername());
+                                                userMap.setPhotoUrl(user.getPhotoUrl());
                                             }
 
                                             if (finished == posts.size()) {
@@ -370,40 +367,42 @@ public class SocialFragment extends Fragment implements
                                                 adapter.addItems(posts);
                                                 loadingDialog.dismiss();
                                                 isLoading = false;
+                                                Log.i(TAG, "onDataChange: Getting users finished : DISMISSED");
                                             }
+                                        } else {
+                                            loadingDialog.dismiss();
+                                            isLoading = false;
+                                            Log.i(TAG, "onDataChange: getting user : No Snapshot : DISMISSED");
                                         }
                                     }
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
                                         loadingDialog.dismiss();
+                                        Log.i(TAG, "onCancelled: getting users: DISMISSED");
                                         isLoading = false; }
                                 });
                             }
                         }
+                        loadingDialog.dismiss();
+                        Log.i(TAG, "onDataChange: End of block reached : DISMISSED");
+                        isLoading = false;
 
                     } else {
-                        Log.d(TAG, "No children");
+                        Log.i(TAG, "onDataChange: Post Query has no children : DISMISSED");
                         loadingDialog.dismiss();
                         isLoading = false;
                         isLastItemReached = true;
                     }
                 }
 
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     loadingDialog.dismiss();
+                    Log.i(TAG, "onCancelled: Post Query : DISMISSED");
                     isLoading = false;
                 }
             });
-
-            /****
-             The line of code below is causing the onScroll listener to fire.
-             Need to find a way to wait for the asynchronous task to finish before setting isLoading to false.
-             How to make it synchronous?
-             *****/
-//            isLoading = false;
 
             postQuery.addChildEventListener(new ChildEventListener() {
                 @Override
@@ -445,6 +444,7 @@ public class SocialFragment extends Fragment implements
 
         } else {
             Log.d(TAG, "MAXED");
+            Log.i(TAG, "getSocialPosts: Last item was reached : DISMISSED");
             isLoading = false;
             loadingDialog.dismiss();
         }

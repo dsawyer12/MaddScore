@@ -6,13 +6,15 @@ import android.os.Parcelable;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class User implements Parcelable, Comparator<User>, Comparable<User> {
+public class User implements
+        Parcelable,
+        Comparator<User>, Comparable<User> {
 
-    private String creator, userID, name, email, phoneNumber, username, PhotoUrl, squad, squad_rank_img;
+    private String creator, userID, name, email, phoneNumber, username, PhotoUrl, squad, squadRankImg;
     private HashMap<String, Boolean> friends = new HashMap<>();
     private boolean registered, completeAccount;
     private long registerDate;
-    private int squad_rank;
+    private int squadRank;
 
     public User() {}
 
@@ -53,11 +55,11 @@ public class User implements Parcelable, Comparator<User>, Comparable<User> {
         username = in.readString();
         PhotoUrl = in.readString();
         squad = in.readString();
-        squad_rank_img = in.readString();
+        squadRankImg = in.readString();
         registered = in.readByte() != 0;
         completeAccount = in.readByte() != 0;
         registerDate = in.readLong();
-        squad_rank = in.readInt();
+        squadRank = in.readInt();
     }
 
     @Override
@@ -70,11 +72,11 @@ public class User implements Parcelable, Comparator<User>, Comparable<User> {
         dest.writeString(username);
         dest.writeString(PhotoUrl);
         dest.writeString(squad);
-        dest.writeString(squad_rank_img);
+        dest.writeString(squadRankImg);
         dest.writeByte((byte) (registered ? 1 : 0));
         dest.writeByte((byte) (completeAccount ? 1 : 0));
         dest.writeLong(registerDate);
-        dest.writeInt(squad_rank);
+        dest.writeInt(squadRank);
     }
 
     @Override
@@ -190,20 +192,20 @@ public class User implements Parcelable, Comparator<User>, Comparable<User> {
             this.phoneNumber = phoneNumber;
         }
 
-    public int getSquad_rank() {
-        return squad_rank;
+    public int getSquadRank() {
+        return squadRank;
     }
 
-    public void setSquad_rank(int squad_rank) {
-        this.squad_rank = squad_rank;
+    public void setSquadRank(int squadRank) {
+        this.squadRank = squadRank;
     }
 
-    public String getSquad_rank_img() {
-        return squad_rank_img;
+    public String getSquadRankImg() {
+        return squadRankImg;
     }
 
-    public void setSquad_rank_img(String squad_rank_img) {
-        this.squad_rank_img = squad_rank_img;
+    public void setSquadRankImg(String squadRankImg) {
+        this.squadRankImg = squadRankImg;
     }
 
     @Override
@@ -213,7 +215,7 @@ public class User implements Parcelable, Comparator<User>, Comparable<User> {
 
     @Override
     public int compareTo(User user) {
-        return (this.squad_rank - user.getSquad_rank());
+        return (this.squadRank - user.getSquadRank());
     }
 }
 

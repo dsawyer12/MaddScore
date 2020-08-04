@@ -224,12 +224,6 @@ public class PostFragment extends DialogFragment implements View.OnClickListener
                 loadingDialog.dismiss();
                 Toast.makeText(getActivity(), "post updated", Toast.LENGTH_SHORT).show();
                 listener.onPostEdit(oldPost);
-
-                // remove this fragment and update adapter
-
-//                Intent intent = new Intent(getActivity(), SquadActivity.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                startActivity(intent);
             } else {
                 loadingDialog.dismiss();
                 Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
@@ -258,12 +252,6 @@ public class PostFragment extends DialogFragment implements View.OnClickListener
                         loadingDialog.dismiss();
                         Toast.makeText(getActivity(), "posted", Toast.LENGTH_SHORT).show();
                         listener.onPostAdd(post);
-
-                        // remove this fragment and update adapter
-
-//                        Intent intent = new Intent(getActivity(), SquadActivity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                        startActivity(intent);
                     } else {
                         loadingDialog.dismiss();
                         if (getActivity() != null)

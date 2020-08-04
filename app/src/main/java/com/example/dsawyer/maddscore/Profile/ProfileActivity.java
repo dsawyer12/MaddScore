@@ -19,7 +19,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -233,7 +232,7 @@ public class ProfileActivity extends AppCompatActivity implements
                             squad_member_cnt.setText(squad.getMemberList().size() + " member(s)");
                             TextView user_squad_rank = active_squad_layout.findViewById(R.id.user_squad_rank);
 
-                            switch(mUser.getSquad_rank()) {
+                            switch(mUser.getSquadRank()) {
                                 case (1):
                                     linear_parent.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.rank_fade_1));
                                     break;
@@ -250,7 +249,7 @@ public class ProfileActivity extends AppCompatActivity implements
                                     linear_parent.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.rank_fade_5));
                                     break;
                             }
-                            user_squad_rank.setText(String.valueOf(mUser.getSquad_rank()));
+                            user_squad_rank.setText(String.valueOf(mUser.getSquadRank()));
                             rootView.setOnClickListener(ProfileActivity.this);
                         }
                     }
@@ -577,7 +576,6 @@ public class ProfileActivity extends AppCompatActivity implements
 
         switch (v.getId()) {
             case (R.id.squad_root):
-                break;
 
             case (R.id.squads_more_info_btn):
                 startActivity(new Intent(ProfileActivity.this, SquadActivity.class));

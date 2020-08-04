@@ -10,7 +10,7 @@
         android:id="@+id/active_squad_layout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:background="@drawable/accessory_faded_background">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -20,6 +20,18 @@
             android:src="@mipmap/default_profile_img"
             android:layout_gravity="center"
             android:layout_margin="10dp"/>
+
+        <TextView
+            android:id="@+id/you_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:text="----  YOU  ----"
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:textColor="@color/white" />
 
         <LinearLayout
             android:id="@+id/squad_name_layout"

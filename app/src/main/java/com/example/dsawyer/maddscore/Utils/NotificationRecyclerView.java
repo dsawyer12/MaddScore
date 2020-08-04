@@ -26,9 +26,9 @@ public class NotificationRecyclerView extends RecyclerView.Adapter<NotificationR
     private ArrayList<NotificationUserMap> myNotifications;
 
     public interface OnRequestClickListener {
-        void onRequestClicked(Notification n);
-        void onRequestAccept(Notification n);
-        void onRequestDeclined(Notification n);
+        void onRequestClicked(NotificationUserMap n);
+        void onRequestAccept(NotificationUserMap n);
+        void onRequestDeclined(NotificationUserMap n);
     }
     private OnRequestClickListener listener;
 
@@ -91,13 +91,13 @@ public class NotificationRecyclerView extends RecyclerView.Adapter<NotificationR
             holder.snippet.setText(myNotifications.get(holder.getAdapterPosition()).getNotification().getSnippet());
         }
 
-        holder.accept.setOnClickListener(v -> listener.onRequestAccept(myNotifications.get(holder.getAdapterPosition()).getNotification()));
+        holder.accept.setOnClickListener(v -> listener.onRequestAccept(myNotifications.get(holder.getAdapterPosition())));
 
-        holder.decline.setOnClickListener(v -> listener.onRequestDeclined(myNotifications.get(holder.getAdapterPosition()).getNotification()));
+        holder.decline.setOnClickListener(v -> listener.onRequestDeclined(myNotifications.get(holder.getAdapterPosition())));
 
         holder.rootView.setOnClickListener(v -> {
             if (myNotifications.get(holder.getAdapterPosition()).getNotification().getNotificationType() == Notification.MESSAGE)
-                listener.onRequestClicked(myNotifications.get(holder.getAdapterPosition()).getNotification());
+                listener.onRequestClicked(myNotifications.get(holder.getAdapterPosition()));
         });
     }
 

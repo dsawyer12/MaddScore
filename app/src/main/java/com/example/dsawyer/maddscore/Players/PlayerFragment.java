@@ -360,6 +360,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
         if (key != null) {
             Notification notification = null;
+
             if (NOTIFICATION_TYPE == Notification.FRIEND_REQUEST) {
                 notification = new Notification(
                         key,
@@ -384,8 +385,8 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                         .child(key)
                         .setValue(notification)
                         .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
 
+                            if (task.isSuccessful()) {
                                 ActiveRequest activeRequest = new ActiveRequest(
                                         UID,
                                         mUser.getUserID(),
@@ -397,11 +398,13 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                                         .addOnCompleteListener(task1 -> {
                                             if (task1.isSuccessful()) {
                                                 switch (NOTIFICATION_TYPE) {
+
                                                     case(Notification.FRIEND_REQUEST):
                                                         active_friend_request = true;
                                                         add_friend_txt.setText("Cancel Friend Request");
                                                         // CHANGE ICON
                                                         break;
+
                                                     case(Notification.SQUAD_INVITE):
                                                         active_squad_request = true;
                                                         invite_to_squad_txt.setText("Cancel Squad Invite");
@@ -469,8 +472,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
         ref.child("activeRequests").child(UID).child(notificationID).removeValue()
                 .addOnCompleteListener(task -> {
+
                     if (task.isSuccessful()) {
                         switch (NOTIFICATION_TYPE) {
+
                             case(Notification.FRIEND_REQUEST):
                                 active_friend_request = false;
                                 add_friend_txt.setText("Add Friend");
@@ -494,10 +499,12 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         Log.d(TAG, "unFriend: ");
         ConfirmRemoveFriendDialog confirmRemove = new ConfirmRemoveFriendDialog();
         Bundle args = new Bundle();
+
         if (mUser != null) {
             args.putParcelable("user", mUser);
             confirmRemove.setArguments(args);
             confirmRemove.setTargetFragment(this, 120);
+
             if (getFragmentManager() != null)
                 confirmRemove.show(getFragmentManager(), "confirmRemove");
         }
@@ -507,10 +514,12 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         Log.d(TAG, "removeSquadMember: ");
         ConfirmRemoveSquadMemberDialog confirmRemove = new ConfirmRemoveSquadMemberDialog();
         Bundle args = new Bundle();
+
         if (mUser != null) {
             args.putParcelable("user", mUser);
             confirmRemove.setArguments(args);
             confirmRemove.setTargetFragment(this, 120);
+
             if (getFragmentManager() != null)
                 confirmRemove.show(getFragmentManager(), "confirmRemove");
         }
@@ -520,10 +529,13 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         Log.d(TAG, "sendMessage: ");
         MessageFragment messageFragment = new MessageFragment();
         Bundle args = new Bundle();
+
         if (mUser != null) {
             args.putParcelable("user", mUser);
             messageFragment.setArguments(args);
-            ((PlayersActivity)getActivity()).setFragment(messageFragment);
+
+            if (getActivity() != null)
+                ((PlayersActivity)getActivity()).setFragment(messageFragment, "messageFragment");
         }
     }
 }

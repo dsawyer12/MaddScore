@@ -17,8 +17,6 @@ public class Squad implements Parcelable {
 
     public Squad(){}
 
-    // squadId, currentUser.getUid(), squad_name, squad_description, privacy_level, date, squadMemberList)
-
     public Squad(String squadID,
                  String creatorId,
                  String squadName,

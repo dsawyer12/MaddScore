@@ -13,6 +13,7 @@ public class UIDGenerator {
         for (int i = 0; i < 3; i++)
             sb.append(charSet[ran.nextInt(36)]);
         sb.append("-");
+
         for (int i = 0; i < length - 3; i++)
             sb.append(charSet[ran.nextInt(36)]);
 

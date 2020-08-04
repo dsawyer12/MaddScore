@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
-import com.example.dsawyer.maddscore.Objects.UserStats;
 
 import java.util.ArrayList;
 
@@ -64,7 +63,7 @@ public class SquadListRecyclerView extends RecyclerView.Adapter<SquadListRecycle
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.playerUsername.setText(listOfUsers.get(position).getUsername());
         holder.playerName.setText(listOfUsers.get(position).getName());
-        holder.playerRank.setText(String.valueOf(listOfUsers.get(position).getSquad_rank()));
+        holder.playerRank.setText(String.valueOf(listOfUsers.get(position).getSquadRank()));
 
         if (listOfUsers.get(position).getPhotoUrl() != null)
             Glide.with(context).load(listOfUsers.get(position).getPhotoUrl()).into(holder.playerImage);

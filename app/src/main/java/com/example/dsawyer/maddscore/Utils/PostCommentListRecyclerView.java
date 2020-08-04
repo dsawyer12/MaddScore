@@ -37,14 +37,14 @@ public class PostCommentListRecyclerView extends RecyclerView.Adapter<PostCommen
     public void addItems(ArrayList<PostCommentUserMap> comments) {
         Log.d(TAG, "addItems: called");
         int initSize = this.comments.size();
-        this.comments.addAll(0, comments);
+        this.comments.addAll(comments);
         notifyItemRangeChanged(initSize, comments.size());
     }
 
     public void addItem(PostCommentUserMap item) {
         Log.d(TAG, "addItem: called");
         int initSize = this.comments.size();
-        this.comments.add(item);
+        this.comments.add(0, item);
         notifyItemRangeChanged(initSize, comments.size());
     }
 

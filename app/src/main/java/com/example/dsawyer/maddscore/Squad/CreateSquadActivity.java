@@ -150,7 +150,7 @@ public class CreateSquadActivity extends AppCompatActivity implements View.OnCli
             if (task.isSuccessful()) {
                 HashMap<String, Object> newSquadMap = new HashMap<>();
                 newSquadMap.put("/users/" + currentUser.getUid() + "/squad/", squad.getSquadID());
-                newSquadMap.put("/users/" + currentUser.getUid() + "/squad_rank/", 1);
+                newSquadMap.put("/users/" + currentUser.getUid() + "/squadRank/", 1);
                 newSquadMap.put("/publicSquadIDs/" + squad.getPublicID(), squad.getSquadID());
 
                 ref.updateChildren(newSquadMap).addOnCompleteListener(task1 -> {

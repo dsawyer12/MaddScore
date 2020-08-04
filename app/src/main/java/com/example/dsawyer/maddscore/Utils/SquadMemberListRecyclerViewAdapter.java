@@ -23,6 +23,7 @@ public class SquadMemberListRecyclerViewAdapter extends RecyclerView.Adapter<Squ
     private static final String TAG = "TAG";
 
     private Context context;
+    private User currentUser;
     private ArrayList<User> memberList;
     private OnSquadMemberClickedListener listener;
 
@@ -30,19 +31,21 @@ public class SquadMemberListRecyclerViewAdapter extends RecyclerView.Adapter<Squ
         void onSquadMemberClicked(User user);
     }
 
-    public SquadMemberListRecyclerViewAdapter(Context context, ArrayList<User> memberList, OnSquadMemberClickedListener listener) {
+    public SquadMemberListRecyclerViewAdapter(Context context, User currentUser, ArrayList<User> memberList, OnSquadMemberClickedListener listener) {
         this.context = context;
+        this.currentUser = currentUser;
         this.memberList = memberList;
         this.listener = listener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CardView root;
-        LinearLayout active_squad_layout;
+        LinearLayout active_squad_layout, squad_name_layout, player_rank_layout;
         CircleImageView profileImg;
         TextView member_username;
         TextView member_name;
         TextView user_squad_rank;
+        TextView you_placeholder;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -52,7 +55,15 @@ public class SquadMemberListRecyclerViewAdapter extends RecyclerView.Adapter<Squ
             member_username = itemView.findViewById(R.id.member_username);
             member_name = itemView.findViewById(R.id.member_name);
             user_squad_rank = itemView.findViewById(R.id.user_squad_rank);
+            you_placeholder = itemView.findViewById(R.id.you_placeholder);
+            squad_name_layout = itemView.findViewById(R.id.squad_name_layout);
+            player_rank_layout = itemView.findViewById(R.id.player_rank_layout);
         }
+    }
+
+    public void updateList(ArrayList<User> list) {
+        this.memberList = list;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -65,33 +76,50 @@ public class SquadMemberListRecyclerViewAdapter extends RecyclerView.Adapter<Squ
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
 
-        switch(memberList.get(holder.getAdapterPosition()).getSquad_rank()) {
-            case (1):
-                holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_1));
-                break;
-            case (2):
-                holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_2));
-                break;
-            case (3):
-                holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_3));
-                break;
-            case (4):
-                holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_4));
-                break;
-            case (5):
-                holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_5));
-                break;
-            default: holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.accessory_faded_background));
+        if (memberList.get(holder.getAdapterPosition()).getUserID().equals(currentUser.getUserID())) {
+            holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.your_rank_placeholder));
+
+            holder.you_placeholder.setVisibility(View.VISIBLE);
+            holder.profileImg.setVisibility(View.GONE);
+            holder.squad_name_layout.setVisibility(View.GONE);
+            holder.player_rank_layout.setVisibility(View.GONE);
         }
+        else {
+            holder.you_placeholder.setVisibility(View.GONE);
+            holder.profileImg.setVisibility(View.VISIBLE);
+            holder.squad_name_layout.setVisibility(View.VISIBLE);
+            holder.player_rank_layout.setVisibility(View.VISIBLE);
 
-        if (memberList.get(holder.getAdapterPosition()).getPhotoUrl() != null)
-            Glide.with(context).load(memberList.get(holder.getAdapterPosition()).getPhotoUrl()).into(holder.profileImg);
-        else
-            Glide.with(context).load(R.mipmap.default_profile_img).into(holder.profileImg);
+            switch (memberList.get(holder.getAdapterPosition()).getSquadRank()) {
+                case (1):
+                    holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_1));
+                    break;
+                case (2):
+                    holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_2));
+                    break;
+                case (3):
+                    holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_3));
+                    break;
+                case (4):
+                    holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_4));
+                    break;
+                case (5):
+                    holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.rank_fade_5));
+                    break;
+                default:
+                    holder.active_squad_layout.setBackground(ContextCompat.getDrawable(context, R.drawable.accessory_faded_background));
+            }
 
-        holder.member_username.setText(memberList.get(holder.getAdapterPosition()).getUsername());
-        holder.member_name.setText(memberList.get(holder.getAdapterPosition()).getName());
-        holder.user_squad_rank.setText(String.valueOf(memberList.get(holder.getAdapterPosition()).getSquad_rank()));
+            holder.member_username.setText(memberList.get(holder.getAdapterPosition()).getUsername());
+            holder.member_name.setText(memberList.get(holder.getAdapterPosition()).getName());
+            if (memberList.get(holder.getAdapterPosition()).getPhotoUrl() != null)
+
+                Glide.with(context).load(memberList.get(holder.getAdapterPosition()).getPhotoUrl()).into(holder.profileImg);
+            else
+                Glide.with(context).load(R.mipmap.default_profile_img).into(holder.profileImg);
+
+            holder.user_squad_rank.setText(String.valueOf(memberList.get(holder.getAdapterPosition()).getSquadRank()));
+        }
 
         holder.root.setOnClickListener(v -> listener.onSquadMemberClicked(memberList.get(holder.getAdapterPosition())));
     }

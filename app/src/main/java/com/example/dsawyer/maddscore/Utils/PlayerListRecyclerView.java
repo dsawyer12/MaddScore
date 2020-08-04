@@ -3,6 +3,7 @@ package com.example.dsawyer.maddscore.Utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.dsawyer.maddscore.Objects.Course;
 import com.example.dsawyer.maddscore.Objects.User;
 import com.example.dsawyer.maddscore.R;
 
@@ -21,20 +23,20 @@ public class PlayerListRecyclerView extends RecyclerView.Adapter<PlayerListRecyc
     private static final String TAG = "TAG";
 
     private Context context;
-    private ArrayList<User> listOfUsers;
+    private ArrayList<User> friendsList;
 
     public interface OnItemClicked {
         void onClick(User user);
     }
     OnItemClicked listener;
 
-    public PlayerListRecyclerView(Context context, OnItemClicked listener, ArrayList<User> listOfUsres) {
+    public PlayerListRecyclerView(Context context, OnItemClicked listener, ArrayList<User> friendsList) {
         this.context = context;
-        this.listOfUsers = listOfUsres;
+        this.friendsList = friendsList;
         this.listener = listener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView playerUsername, playerName;
         LinearLayout rootView;
         CircleImageView profileImage;
@@ -48,6 +50,11 @@ public class PlayerListRecyclerView extends RecyclerView.Adapter<PlayerListRecyc
         }
     }
 
+    public void updateList(ArrayList<User> list) {
+        this.friendsList = list;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,23 +64,19 @@ public class PlayerListRecyclerView extends RecyclerView.Adapter<PlayerListRecyc
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        holder.playerUsername.setText(listOfUsers.get(position).getUsername());
-        holder.playerName.setText(listOfUsers.get(position).getName());
-        if (listOfUsers.get(position).getPhotoUrl() != null){
-            Glide.with(context).load(listOfUsers.get(position).getPhotoUrl()).into(holder.profileImage);
-        }else{
+        holder.playerUsername.setText(friendsList.get(position).getUsername());
+        holder.playerName.setText(friendsList.get(position).getName());
+
+        if (friendsList.get(position).getPhotoUrl() != null) {
+            Glide.with(context).load(friendsList.get(position).getPhotoUrl()).into(holder.profileImage);
+        }else
             Glide.with(context).load(R.mipmap.default_profile_img).into(holder.profileImage);
-        }
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClick(listOfUsers.get(holder.getAdapterPosition()));
-            }
-        });
+
+        holder.rootView.setOnClickListener(v -> listener.onClick(friendsList.get(holder.getAdapterPosition())));
     }
     @Override
     public int getItemCount() {
-        return listOfUsers.size();
+        return friendsList.size();
     }
 }
 
